@@ -75,8 +75,6 @@ parser.add_option('--prebuilt',
 
 (options, args) = parser.parse_args()
 
-print(options)
-
 IMAGE_TAG=""
 if options.debug_buildscript:
     IMAGE_TAG="buildscript-debug"
