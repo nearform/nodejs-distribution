@@ -1,10 +1,20 @@
 # OpenShift Builder Images for Node.js Applications
 
-[![CircleCI](https://circleci.com/gh/nearform/rhel-s2i-nodejs/tree/simple-rhel-base.svg?style=svg)](https://circleci.com/gh/nearform/rhel-s2i-nodejs/tree/simple-rhel-base)
+[![CircleCI](https://circleci.com/gh/nearform/nodejs-distribution.svg?style=svg)](https://circleci.com/gh/nearform/nodejs-distribution)
 
-This repository contains sources for an [s2i](https://github.com/openshift/source-to-image) builder image, based on RHEL7 and Node.js releases from nodejs.org.
+This repository contains sources for an [s2i](https://github.com/openshift/source-to-image) builder image for Node.js releases from nodejs.org. We build images based on various Operating Systems:
+* Rhel 7
+  [![docker hub stats](http://dockeri.co/image/nearform/rhel7-s2i-nodejs)](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/)
+* Centos 7
+  [![docker hub stats](http://dockeri.co/image/nearform/centos7-s2i-nodejs)](https://hub.docker.com/r/nearform/centos7-s2i-nodejs/)
+* TODO Alpine 3.7
 
-[![docker hub stats](http://dockeri.co/image/nearform/rhel7-s2i-nodejs)](https://hub.docker.com/r/bucharestgold/rhel7-s2i-nodejs/)
+The image can be used like any other image specifying it in your Dockerfile like this:
+```
+FROM nearform/centos7-s2i-nodejs
+...
+```
+The Images are also prepared for use with [s2i](https://github.com/openshift/source-to-image/), a clean way to run your Node.js code in a controlled, squashed and secure image.
 
 For more information about using these images with OpenShift, please see the
 official [OpenShift Documentation](https://docs.openshift.org/latest/using_images/s2i_images/nodejs.html).
@@ -12,6 +22,7 @@ official [OpenShift Documentation](https://docs.openshift.org/latest/using_image
 ### Building instructions for CircleCI ###
 The configuration can be found in /.circleci/config.json
 The build is configured using the following [build parameters](https://circleci.com/docs/2.0/env-vars/#injecting-environment-variables-with-the-api).
+* OS, Operating System, i.e. "rhel7"
 * VERSION, node.js version i.e."8.9.3"
 * V8, V8 version i.e. "6.1.534.48"
 * NPM, npm version i.e. "5.5.1"
@@ -21,7 +32,7 @@ The build is configured using the following [build parameters](https://circleci.
 * LTS, LTS string i.e. "Carbon"
 * "PREBUILT", use prebuilt binaries if set to "T", otherwise build from sources
 
-Furthermore, there is a configurationfile at `.config/config.json` to map node.js versions to Red Hat projects.
+For the Red Hat images, there is a configurationfile at `.config/config.json` to map node.js versions to Red Hat projects. In the [Red Hat Catalog](https://access.redhat.com/containers/#/vendor/nearform) the different versions are organised in their own repository.
 In order to push images to the Red Hat cetification registry a secret has to be provided for each project.
 The configurationfile provides the ENV variables used to obtain a secret for each project, i.e. `NODEJS_6_SECRET`.
 
@@ -30,13 +41,12 @@ The configurationfile provides the ENV variables used to obtain a secret for eac
 Node.js versions [currently provided](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/tags/):
 
 <!-- versions.start -->
-* **`9.2.1`**: (8.x, latest)
-* **`8.9.3`**: (8.x, latest)
-* **`6.12.2`**: (6.x, Boron)
+* **`9.2.1`**: (8.x, latest, Red Hat Catalog, unsupported)
+* **`8.9.3`**: (8.x, latest, LTS, Red Hat Catalog, supported)
+* **`6.12.2`**: (6.x, Boron, LTS, supported)
 <!-- versions.end -->
 
---> TODO below update
-## Usage
+## Source2image Usage
 
 Using this image with OpenShift `oc` command line tool, or with `s2i` directly, will
 assemble your application source with any required dependencies to create a new image.
