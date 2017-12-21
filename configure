@@ -1,0 +1,114 @@
+#!/bin/sh
+
+# Used ofmr NODEJS configure script
+
+# Locate python2 interpreter and re-execute the script.  Note that the
+# mix of single and double quotes is intentional, as is the fact that
+# the ] goes on a new line.
+_=[ 'exec' '/bin/sh' '-c' '''
+which python2.7 >/dev/null && exec python2.7 "$0" "$@"
+which python2 >/dev/null && exec python2 "$0" "$@"
+exec python "$0" "$@"
+''' "$0" "$@"
+]
+del _
+
+import io
+import optparse
+import os
+
+# parse our options
+parser = optparse.OptionParser()
+
+parser.add_option('--os',
+    action='store',
+    dest='os',
+    help='Operating System')
+
+parser.add_option('--version',
+    action='store',
+    dest='node_version',
+    help='Version used to build node')
+
+parser.add_option('--v8',
+    action='store',
+    dest='v8',
+    help='v8 engine')
+
+parser.add_option('--npm',
+    action='store',
+    dest='npm',
+    help='npm version')
+
+parser.add_option('--tag',
+    action='store',
+    dest='tag',
+    help='image tag')
+
+parser.add_option('--lts',
+    action='store',
+    dest='lts',
+    help='image lts tag if any')
+
+parser.add_option('--major',
+    action='store',
+    dest='major',
+    help='image major tag if any')
+
+parser.add_option('--minor',
+    action='store',
+    dest='minor',
+    help='image major tag if any')
+
+
+parser.add_option('--debug',
+                  action='store_true',
+                  dest='debug_buildscript',
+                  help='This build is for debugging build scripts',
+                 default=False)
+
+parser.add_option('--prebuilt',
+                  action='store_true',
+                  dest='prebuilt',
+                  help='Use prebuilt binaries',
+                  default=False)
+
+(options, args) = parser.parse_args()
+
+IMAGE_TAG=""
+if options.debug_buildscript:
+    IMAGE_TAG="buildscript-debug"
+else:
+    IMAGE_TAG=""+options.tag
+
+if options.prebuilt:
+    IMAGE_TAG=IMAGE_TAG+"-prebuilt"
+
+if os.path.isfile('./image/'+options.os+'/Dockerfile'):
+    DOCKERFILE='./image/'+options.os+'/Dockerfile'
+else:
+    print("[./image/"+options.os+"/Dockerfile] is not found, exiting")
+    exit()
+
+with io.FileIO("versions.mk", "w") as file:
+    file.write("NODE_VERSION="+options.node_version+"\n")
+    file.write("OS="+options.os+"\n")
+    file.write("DOCKERFILE="+DOCKERFILE+"\n")
+    file.write("IMAGE_TAG="+IMAGE_TAG+"\n")
+    if options.debug_buildscript:
+        file.write("DEBUG_BUILD=T\n")
+    else:
+        file.write("IMAGE_TAG="+options.tag+"\n")
+    if options.lts:
+        file.write("LTS_TAG="+options.lts+"\n")
+    if options.major:
+        file.write("MAJOR_TAG="+options.major+"\n")
+    if options.minor:
+        file.write("MINOR_TAG="+options.minor+"\n")
+    file.write("IMAGE_NAME=nearform/"+options.os+"-s2i-nodejs\n")
+    file.write("NPM_VERSION="+options.npm+"\n")
+    if options.prebuilt:
+        file.write("PREBUILT=T\n")
+
+with io.FileIO("versions.mk", "r") as file:
+    print file.read()

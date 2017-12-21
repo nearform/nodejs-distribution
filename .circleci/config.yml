@@ -1,0 +1,86 @@
+version: 2
+jobs:
+  build:
+    docker:
+        - image: nearform/docker_circleci:0.0.7
+    resource_class: xlarge
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Info
+          command: |
+            make envinfo
+      - run:
+          name: Configure
+          command: |
+            if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+                echo 'one or more variables are undefined, assuming build script debug mode'
+                export VERSION=6.12.1
+                export V8=5.1.281.109
+                export NPM=3.10.10
+                export TAG=test-only
+                export DEBUG_BUILD=T
+
+                ./configure --version "$VERSION" \
+                        --os centos
+                        --v8 "$V8" \
+                        --npm "$NPM" \
+                        --tag "$TAG" \
+                        --debug \
+                        --prebuilt
+            else
+                ./configure --version "$VERSION" \
+                        --os "$OS"
+                        --v8 "$V8" \
+                        --npm "$NPM" \
+                        --tag "$TAG" \
+                        --lts "$LTS" \
+                        --major "$MAJOR" \
+                        --minor "$MINOR"
+            fi
+      - run:
+          name: Build
+          command: make build
+      - run:
+          name: Docker squash
+          command: make squash
+      - run:
+          name: Test
+          command: make test
+      - run:
+          name: Publish
+          command: |
+            make publish
+      - run:
+          name: Publish to Red Hat
+          command: |
+            if [ "$OS" -eq "rleh7" ]; then
+                source contrib/etc/util.sh
+                if ! isDebug && shouldPublish; then
+                    echo $(getProjectSecret) | docker login -u unused registry.rhc4tp.openshift.com:443 --password-stdin
+                    export RH_PID=$(getProjectId)
+                    make redhat_publish
+                fi
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+      - run:
+          name: Archive
+          command: |
+            if [ "$OS" -eq "rleh7" ]; then
+                make archive
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+      - run:
+          name: Upload
+          command: |
+            if [ "$OS" -eq "rleh7" ]; then
+                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                make upload
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+

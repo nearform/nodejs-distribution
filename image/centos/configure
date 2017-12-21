@@ -1,0 +1,72 @@
+#!/bin/sh
+
+# Used ofmr NODEJS configure script
+
+# Locate python2 interpreter and re-execute the script.  Note that the
+# mix of single and double quotes is intentional, as is the fact that
+# the ] goes on a new line.
+_=[ 'exec' '/bin/sh' '-c' '''
+which python2.7 >/dev/null && exec python2.7 "$0" "$@"
+which python2 >/dev/null && exec python2 "$0" "$@"
+exec python "$0" "$@"
+''' "$0" "$@"
+]
+del _
+
+import io
+import optparse
+
+# parse our options
+parser = optparse.OptionParser()
+
+parser.add_option('--version',
+    action='store',
+    dest='node_version',
+    help='Version used to build node')
+
+parser.add_option('--v8',
+    action='store',
+    dest='v8',
+    help='v8 engine')
+
+parser.add_option('--npm',
+    action='store',
+    dest='npm',
+    help='npm version')
+
+parser.add_option('--tag',
+    action='store',
+    dest='tag',
+    help='image tag')
+
+parser.add_option('--lts',
+    action='store',
+    dest='lts',
+    help='image lts tag if any')
+
+parser.add_option('--major',
+    action='store',
+    dest='major',
+    help='image major tag if any')
+
+parser.add_option('--minor',
+    action='store',
+    dest='minor',
+    help='image major tag if any')
+
+(options, args) = parser.parse_args()
+
+with io.FileIO("versions.mk", "w") as file:
+    file.write("NODE_VERSION="+options.node_version+"\n")
+    file.write("IMAGE_TAG="+options.tag+"\n")
+    if options.lts:
+        file.write("LTS_TAG="+options.lts+"\n")
+    if options.major:
+        file.write("MAJOR_TAG="+options.major+"\n")
+    if options.minor:
+        file.write("MINOR_TAG="+options.minor+"\n")
+    file.write("IMAGE_NAME=nearform/centos7-s2i-nodejs\n")
+    file.write("NPM_VERSION="+options.npm+"\n")
+
+with io.FileIO("versions.mk", "r") as file:
+    print file.read()
