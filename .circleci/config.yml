@@ -34,7 +34,7 @@ jobs:
                 source contrib/etc/util.sh
                 if osSupported; then
                     ./configure --version "$VERSION" \
-                            --os "$OS"
+                            --os "$OS" \
                             --v8 "$V8" \
                             --npm "$NPM" \
                             --tag "$TAG" \
