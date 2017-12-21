@@ -1,4 +1,4 @@
-# OpenShift Builder Images for Node.js Applications
+# nearForm Docker distribution for Node.js Applications
 
 [![CircleCI](https://circleci.com/gh/nearform/nodejs-distribution.svg?style=svg)](https://circleci.com/gh/nearform/nodejs-distribution)
 
