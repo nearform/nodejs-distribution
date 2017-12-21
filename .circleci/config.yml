@@ -73,7 +73,7 @@ jobs:
             if [ "$OS" -eq "rleh7" ]; then
                 make archive
             else
-                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+                echo "OS is not [rhel7] not archiving"
             fi
       - run:
           name: Upload
@@ -83,6 +83,6 @@ jobs:
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
                 make upload
             else
-                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+                echo "OS is not [rhel7] not uploading"
             fi
 
