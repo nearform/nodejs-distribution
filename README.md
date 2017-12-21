@@ -2,7 +2,13 @@
 
 [![CircleCI](https://circleci.com/gh/nearform/nodejs-distribution.svg?style=svg)](https://circleci.com/gh/nearform/nodejs-distribution)
 
-This repository contains sources for an [s2i](https://github.com/openshift/source-to-image) builder image for Node.js releases from nodejs.org. Commercial support for LTS versions is available by [contacting](https://www.nearform.com/contact/) nearForm directly. We build and images based on various Operating Systems:
+This repository contains sources for an [s2i](https://github.com/openshift/source-to-image) builder image for Node.js releases from nodejs.org.
+
+## Support
+Commercial support for LTS versions is available by [contacting](https://www.nearform.com/contact/) nearForm directly.
+
+## Flavors
+We build and images based on various Operating Systems:
 * Rhel 7
 
   [![docker hub stats](http://dockeri.co/image/nearform/rhel7-s2i-nodejs)](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/)
