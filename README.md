@@ -31,8 +31,8 @@ The build is configured using the following [build parameters](https://circleci.
 * TAG, image tag i.e. "8.9.3"
 * MAJOR, major version i.e. "8"
 * MINOR, major and minor version i.e. "8.9"
-* LTS, LTS string i.e. "Carbon"
-* "PREBUILT", use prebuilt binaries if set to "T", otherwise build from sources
+* LTS, Long Time Support string i.e. "Carbon"
+* PREBUILT, use prebuilt binaries if set to "T", otherwise build from sources
 
 For the Red Hat images, there is a configurationfile at `.config/config.json` to map node.js versions to Red Hat projects. In the [Red Hat Catalog](https://access.redhat.com/containers/#/vendor/nearform) the different versions are organised in their own repository.
 In order to push images to the Red Hat cetification registry a secret has to be provided for each project.
