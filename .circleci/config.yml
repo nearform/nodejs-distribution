@@ -52,6 +52,7 @@ jobs:
       - run:
           name: Publish
           command: |
+            printenv
             make publish
       - run:
           name: Publish to Red Hat
