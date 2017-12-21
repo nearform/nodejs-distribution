@@ -32,7 +32,7 @@ jobs:
                         --prebuilt
             else
                 source contrib/etc/util.sh
-                if osSupported; then
+                if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
                             --v8 "$V8" \
