@@ -4,8 +4,10 @@
 
 This repository contains sources for an [s2i](https://github.com/openshift/source-to-image) builder image for Node.js releases from nodejs.org. We build images based on various Operating Systems:
 * Rhel 7
+
   [![docker hub stats](http://dockeri.co/image/nearform/rhel7-s2i-nodejs)](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/)
 * Centos 7
+
   [![docker hub stats](http://dockeri.co/image/nearform/centos7-s2i-nodejs)](https://hub.docker.com/r/nearform/centos7-s2i-nodejs/)
 * TODO Alpine 3.7
 
