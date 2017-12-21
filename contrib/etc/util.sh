@@ -2,6 +2,19 @@
 
 CONFIG_PATH=.config/config.json
 
+osSupported() {
+    declare -a arr=("rhel7" "centos7" "alpine3")
+
+    local retVal=1
+    for i in "${arr[@]}"; do
+        if [[ $i = $1 ]]; then
+            retVal=0
+            break
+        fi
+    done
+    return ${retVal}
+}
+
 isDebug() {
     if [ ! -z "$DEBUG_BUILD" ]; then
         return 0

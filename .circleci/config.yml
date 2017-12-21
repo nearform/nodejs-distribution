@@ -17,7 +17,7 @@ jobs:
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
                 export VERSION=6.12.1
-                export OS=centos
+                export OS=centos7
                 export V8=5.1.281.109
                 export NPM=3.10.10
                 export TAG=test-only
@@ -31,14 +31,20 @@ jobs:
                         --debug \
                         --prebuilt
             else
-                ./configure --version "$VERSION" \
-                        --os "$OS"
-                        --v8 "$V8" \
-                        --npm "$NPM" \
-                        --tag "$TAG" \
-                        --lts "$LTS" \
-                        --major "$MAJOR" \
-                        --minor "$MINOR"
+                source contrib/etc/util.sh
+                if osSupported ${OS}; then
+                    ./configure --version "$VERSION" \
+                            --os "$OS" \
+                            --v8 "$V8" \
+                            --npm "$NPM" \
+                            --tag "$TAG" \
+                            --lts "$LTS" \
+                            --major "$MAJOR" \
+                            --minor "$MINOR"
+                else
+                    echo "Unsupported os: $OS"
+                    exit 1
+                fi
             fi
       - run:
           name: Build
@@ -57,7 +63,7 @@ jobs:
       - run:
           name: Publish to Red Hat
           command: |
-            if [ "$OS" -eq "rleh7" ]; then
+            if [ "$OS" -eq "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
                     echo $(getProjectSecret) | docker login -u unused registry.rhc4tp.openshift.com:443 --password-stdin
@@ -70,19 +76,19 @@ jobs:
       - run:
           name: Archive
           command: |
-            if [ "$OS" -eq "rleh7" ]; then
+            if [ "$OS" -eq "rhel7" ]; then
                 make archive
             else
-                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+                echo "OS is not [rhel7] not archiving"
             fi
       - run:
           name: Upload
           command: |
-            if [ "$OS" -eq "rleh7" ]; then
+            if [ "$OS" -eq "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
                 make upload
             else
-                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+                echo "OS is not [rhel7] not uploading"
             fi
 
