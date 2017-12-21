@@ -5,12 +5,14 @@ CONFIG_PATH=.config/config.json
 osSupported() {
     declare -a arr=("rhel7" "centos7" "alpine3")
 
+    local retVal=1
     for i in "${arr[@]}"; do
         if [[ $i = $1 ]]; then
-            return 1
+            retVal=0
+            break
         fi
     done
-    return 0
+    return ${retVal}
 }
 
 isDebug() {
