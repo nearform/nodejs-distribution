@@ -49,8 +49,8 @@ The configurationfile provides the ENV variables used to obtain a secret for eac
 Node.js versions [currently provided](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/tags/):
 
 <!-- versions.start -->
-* **`9.2.1`**: (8.x, latest, Red Hat Catalog, unsupported)
-* **`8.9.3`**: (8.x, latest, LTS, Red Hat Catalog, supported)
+* **`9.2.1`**: (8.x, latest, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs9), unsupported)
+* **`8.9.3`**: (8.x, latest, LTS, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs8), supported)
 * **`6.12.2`**: (6.x, Boron, LTS, supported)
 <!-- versions.end -->
 
