@@ -75,8 +75,6 @@ parser.add_option('--prebuilt',
 
 (options, args) = parser.parse_args()
 
-print(options)
-
 IMAGE_TAG=""
 if options.debug_buildscript:
     IMAGE_TAG="buildscript-debug"
@@ -90,7 +88,7 @@ if os.path.isfile('./image/'+options.os+'/Dockerfile'):
     DOCKERFILE='./image/'+options.os+'/Dockerfile'
 else:
     print("[./image/"+options.os+"/Dockerfile] is not found, exiting")
-    exit()
+    exit(1)
 
 with io.FileIO("versions.mk", "w") as file:
     file.write("NODE_VERSION="+options.node_version+"\n")
