@@ -2,11 +2,11 @@
 
 set -ex
 
-if [ x"${PREBUILT}" = "xT" ]; then
+# Node.js binaries don't run on alpine, because glibc is missing
+if [ x"${PREBUILT}" = "xT" ] && [ "${OS}" != "alpine3" ]; then
     echo "Installing from prebuilt binary"
     tar -zxf /src/node-v${NODE_VERSION}-linux-x64.tar.gz -C /usr/local --strip-components=1
-    npm install -g npm@${NPM_VERSION}
-    # npm install -g npm@${NPM_VERSION} -s &>/dev/null
+    npm install -g npm@${NPM_VERSION} -s &>/dev/null
 else
     echo "INFO: Building from source"
     tar -zxf /src/node-v${NODE_VERSION}.tar.gz -C /tmp/ --strip-components=1
