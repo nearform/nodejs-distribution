@@ -38,7 +38,9 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
 COPY ./src/ /src
 COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
-RUN ls RUN /opt/app-root/
+RUN ls RUN /opt/
+RUN ls RUN /src
+RUN ls RUN $STI_SCRIPTS_PATH
 RUN /opt/app-root/etc/install_node_source.sh
 
 USER 1001
