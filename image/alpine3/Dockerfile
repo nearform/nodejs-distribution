@@ -1,6 +1,41 @@
 FROM alpine:3.7
 # This image provides a Node.JS environment you can use to run your Node.JS applications.
 
+## START s2i specific stuff
+ENV \
+    # Path to be used in other layers to place s2i scripts into
+    STI_SCRIPTS_PATH=/usr/libexec/s2i \
+    APP_ROOT=/opt/app-root \
+    # The $HOME is not set by default, but some applications needs this variable
+    HOME=/opt/app-root/src \
+    PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH
+
+# This is the list of basic dependencies that all language Docker image can consume.
+RUN apk update && \
+    apk add findutils \
+        gettext && \
+    rm -rf /var/cache/apk/*
+
+# Copy extra files to the image.
+COPY image/alpine3/root/ /
+
+# Directory with the sources is set as the working directory so all STI scripts
+# can execute relative to this path.
+WORKDIR ${HOME}
+
+ENTRYPOINT ["container-entrypoint"]
+CMD ["base-usage"]
+
+# Add default user
+RUN adduser -u 1001 -S -G root -h ${HOME} -s /sbin/nologin default && \
+    chown -R 1001:0 ${APP_ROOT}
+
+RUN mkdir /licences && \
+    mkdir -p /opt/app-root && \
+    mkdir -p $STI_SCRIPTS_PATH
+
+## END s2i specific stuff
+
 EXPOSE 8080
 
 # This image will be initialized with "npm run $NPM_RUN"
@@ -30,17 +65,26 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
     io.openshift.tags="builder,nodejs,nodejs-$NODE_VERSION" \
     com.redhat.deployments-dir="/opt/app-root/src" \
     maintainer="nearForm Developer Support <devsupport@nearform.com>" \
-    name="centos-s2i-nodejs" \
+    name="alpine3-s2i-nodejs" \
     vendor="nearForm Ltd" \
-    summary="Centos based s2i image for NodeJS applications" \
-    description="Centos based s2i image for NodeJS applications"
+    summary="Alpine based s2i image for NodeJS applications" \
+    description="Alpine based s2i image for NodeJS applications"
+
+RUN mkdir /src
 
 COPY ./src/ /src
 COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
-RUN ls RUN /opt/
-RUN ls RUN /src
-RUN ls RUN $STI_SCRIPTS_PATH
+
+RUN ls /opt/app-root/etc/install_node_source.sh -Alh
+
+### Atomic Help File - Write in Markdown, it will be converted to man format at build time.
+### https://github.com/projectatomic/container-best-practices/blob/master/creating/help.adoc
+COPY help/help.md /tmp/
+
+### add licenses to this directory
+COPY image/alpine3/licenses /licenses
+
 RUN /opt/app-root/etc/install_node_source.sh
 
 USER 1001
