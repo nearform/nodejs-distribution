@@ -13,7 +13,17 @@ ENV \
 # This is the list of basic dependencies that all language Docker image can consume.
 RUN apk update && \
     apk add findutils \
-        gettext && \
+        gettext \
+        bash \
+        python \
+        make \
+        gcc \
+        clang \
+        g++ \
+        python \
+        linux-headers \
+        binutils-gold \
+        libstdc++ && \
     rm -rf /var/cache/apk/*
 
 # Copy extra files to the image.
@@ -73,6 +83,7 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
 RUN mkdir /src
 
 COPY ./src/ /src
+RUN ls /src
 COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
 
