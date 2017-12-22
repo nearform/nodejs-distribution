@@ -5,7 +5,7 @@ set -ex
 if [ x"${PREBUILT}" = "xT" ]; then
     echo "Installing from prebuilt binary"
     tar -zxf /src/node-v${NODE_VERSION}-linux-x64.tar.gz -C /usr/local --strip-components=1
-    ls /usr/local/npm
+    ls /usr/local/bin/npm
     npm install -g npm@${NPM_VERSION} -s &>/dev/null
 else
     echo "INFO: Building from source"
