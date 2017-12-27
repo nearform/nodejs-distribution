@@ -37,7 +37,7 @@ done
 cd "${SRCDIR}"
 curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc
 gpg --verify SHASUMS256.txt.asc || exit 1
-if [[ x"${PREBUILT}" == "xT" ]]; then
+if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
     grep " node-v${NODE_VERSION}-linux-x64.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 else

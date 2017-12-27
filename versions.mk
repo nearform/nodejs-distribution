@@ -1,10 +1,10 @@
 NODE_VERSION=8.9.2
-OS=rhel7
-DOCKERFILE=./image/rhel7/Dockerfile
+OS=alpine3
+DOCKERFILE=./image/alpine3/Dockerfile
 IMAGE_TAG=8.9.2
 IMAGE_TAG=8.9.2
 LTS_TAG=Carbon
 MAJOR_TAG=8
 MINOR_TAG=8.9
-IMAGE_NAME=nearform/rhel7-s2i-nodejs
+IMAGE_NAME=nearform/alpine3-s2i-nodejs
 NPM_VERSION=5.5.1

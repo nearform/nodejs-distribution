@@ -63,7 +63,7 @@ jobs:
       - run:
           name: Publish to Red Hat
           command: |
-            if [ "$OS" -eq "rhel7" ]; then
+            if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
                     echo $(getProjectSecret) | docker login -u unused registry.rhc4tp.openshift.com:443 --password-stdin
@@ -76,7 +76,7 @@ jobs:
       - run:
           name: Archive
           command: |
-            if [ "$OS" -eq "rhel7" ]; then
+            if [ "$OS" == "rhel7" ]; then
                 make archive
             else
                 echo "OS is not [rhel7] not archiving"
@@ -84,7 +84,7 @@ jobs:
       - run:
           name: Upload
           command: |
-            if [ "$OS" -eq "rhel7" ]; then
+            if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
                 make upload
