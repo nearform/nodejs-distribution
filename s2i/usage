@@ -1,11 +1,20 @@
 #!/bin/sh
 
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    ID=$ID
+    VER=$VERSION_ID
+else
+    ID=centos
+    VER=7
+fi
+
 cat <<EOF
 This is a Source2Image base for Nodejs:
 To use it, install S2I: https://github.com/openshift/source-to-image
 
 Sample invocation:
-s2i build https://github.com/bucharest-gold/s2i-nodejs --context-dir=nodejs.org/test/test-app/ nearform/rhel7-s2i-nodejs:current nodejs-sample-app
+s2i build https://github.com/nearform/nodejs-distribution --context-dir=nodejs.org/test/test-app/ nearform/rhel7-s2i-nodejs:current nodejs-sample-app
 
 You can then run the resulting image via:
 docker run -p 8080:8080 nodejs-sample-app
