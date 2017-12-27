@@ -15,7 +15,9 @@ We build and images based on various Operating Systems:
 * Centos 7
 
   [![docker hub stats](http://dockeri.co/image/nearform/centos7-s2i-nodejs)](https://hub.docker.com/r/nearform/centos7-s2i-nodejs/)
-* TODO Alpine 3.7
+* Alpine 3
+
+  [![docker hub stats](http://dockeri.co/image/nearform/alpine3-s2i-nodejs)](https://hub.docker.com/r/nearform/alpine3-s2i-nodejs/)
 
 The image can be used like any other image specifying it in your Dockerfile like this:
 ```
@@ -49,7 +51,7 @@ The configurationfile provides the ENV variables used to obtain a secret for eac
 Node.js versions currently provided:
 
 <!-- versions.start -->
-* **`9.2.1`**: (9.x, latest, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs9), unsupported)
+* **`9.3.0`**: (9.x, latest, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs9), unsupported)
 * **`8.9.3`**: (8.x, latest, LTS, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs8), supported)
 * **`6.12.2`**: (6.x, Boron, LTS, supported)
 <!-- versions.end -->
