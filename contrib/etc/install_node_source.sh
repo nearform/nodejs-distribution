@@ -17,7 +17,8 @@ else
 fi
 
 # Install yarn
-npm install -g yarn -s &>/dev/null
+# npm install -g yarn -s &>/dev/null
+npm install -g yarn
 
 # Fix permissions for the npm update-notifier
 # Fix permissions for the npm update-notifier
