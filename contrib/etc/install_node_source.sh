@@ -16,7 +16,7 @@ else
     make install
 fi
 
-if [ "${VERSION}}" = "6.0.0" ] && [ -f /etc/alpine-release ]; then
+if [ $(node --version | grep "6.0.0") ] && [ -f /etc/alpine-release ]; then
     echo 'skip yarn install'
 else
     # Install yarn
