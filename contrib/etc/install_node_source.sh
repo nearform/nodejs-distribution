@@ -16,9 +16,12 @@ else
     make install
 fi
 
-# Install yarn
-# npm install -g yarn -s &>/dev/null
-npm install -g yarn
+if [ "${VERSION}}" = "6.0.0" ] && [ -f /etc/alpine-release ]; then
+    echo 'skip yarn install'
+else
+    # Install yarn
+    npm install -g yarn -s &>/dev/null
+fi
 
 # Fix permissions for the npm update-notifier
 # Fix permissions for the npm update-notifier
