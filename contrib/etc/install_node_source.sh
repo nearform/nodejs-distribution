@@ -24,7 +24,6 @@ else
 fi
 
 # Fix permissions for the npm update-notifier
-# Fix permissions for the npm update-notifier
 if [ ! -d /opt/app-root/src/.config ] ; then
   mkdir -p /opt/app-root/src/.config
 fi
