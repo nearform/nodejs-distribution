@@ -9,8 +9,16 @@ if [ x"${PREBUILT}" = "xT" ] && [ ! -f /etc/alpine-release ]; then
     npm install -g npm@${NPM_VERSION} -s &>/dev/null
 else
     echo "INFO: Building from source"
-    tar -zxf /src/node-v${NODE_VERSION}.tar.gz -C /tmp/ --strip-components=1
-    cd /tmp/
+    if [ -d /src/node-v${NODE_VERSION}.tar.gz ]; then
+        tar -zxf /src/node-v${NODE_VERSION}.tar.gz -C /tmp/ --strip-components=1
+        cd /tmp/
+    elif [ -d /src/node-v${NODE_VERSION} ]; then
+        cd /src/node-v${NODE_VERSION}
+    else
+        echo "No source files found, exiting..."
+        exit 1
+    fi
+
     ./configure
     make -j$(getconf _NPROCESSORS_ONLN)
     make -j$(getconf _NPROCESSORS_ONLN) test-only
