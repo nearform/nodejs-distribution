@@ -3,7 +3,7 @@
 set -ex
 
 NODE_VERSION="${1}"
-SRCDIR=$(cd "${2}"; pwd)
+SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
 
 mkdir -p "${SRCDIR}" || exit 1
