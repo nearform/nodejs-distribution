@@ -4,23 +4,14 @@ set -ex
 
 NODE_VERSION="${1}"
 SRCDIR="${2}"
+NODEDIR="node-v${NODE_VERSION}"
 
 mkdir -p "${SRCDIR}" || exit 1
-
-if command -v sha256sum; then
-    SHACMD=sha256sum
-elif command -v shasum; then
-    SHACMD='shasum -a 256 '
-else
-    echo "sha256sum or shasum required, exiting.."
-    exit 1
-fi
-
 
 # Download and install a binary from nodejs.org
 # Add the gpg keys listed at https://github.com/nodejs/node
 for key in \
-    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+        94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
         B9AE9905FFD7803F25714661B63B535A4C206CA9 \
         77984A986EBC2AA786BC0F66B01FBB92821C587A \
         56730D5401028683275BD23C23EFEFE93C4CFFFE \
@@ -35,13 +26,31 @@ done
 
 # Get the node binary and it's shasum
 cd "${SRCDIR}"
-curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc
-gpg --verify SHASUMS256.txt.asc || exit 1
 if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
+
+    if command -v sha256sum; then
+        SHACMD=sha256sum
+    elif command -v shasum; then
+        SHACMD='shasum -a 256 '
+    else
+        echo "sha256sum or shasum required, exiting.."
+        exit 1
+    fi
+    curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc
+    gpg --verify SHASUMS256.txt.asc || exit 1
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
     grep " node-v${NODE_VERSION}-linux-x64.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 else
-    curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz
-    grep " node-v${NODE_VERSION}.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
+    if [ -d ${NODEDIR} ]; then
+        cd ${NODEDIR}
+        git fetch --all
+    else
+        git clone https://github.com/nodejs/node.git ${NODEDIR}
+        cd ${NODEDIR}
+    fi
+    git verify-tag v${NODE_VERSION} || exit 1
+    git checkout tags/v${NODE_VERSION}
+    cd "${SRCDIR}"
+    # curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz
+    # grep " node-v${NODE_VERSION}.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 fi
-
