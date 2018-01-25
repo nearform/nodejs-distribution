@@ -8,14 +8,6 @@ NODEDIR="node-v${NODE_VERSION}"
 
 mkdir -p "${SRCDIR}" || exit 1
 
-if command -v sha256sum; then
-    SHACMD=sha256sum
-elif command -v shasum; then
-    SHACMD='shasum -a 256 '
-else
-    echo "sha256sum or shasum required, exiting.."
-    exit 1
-fi
 # Download and install a binary from nodejs.org
 # Add the gpg keys listed at https://github.com/nodejs/node
 for key in \
@@ -35,6 +27,15 @@ done
 # Get the node binary and it's shasum
 cd "${SRCDIR}"
 if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
+
+    if command -v sha256sum; then
+        SHACMD=sha256sum
+    elif command -v shasum; then
+        SHACMD='shasum -a 256 '
+    else
+        echo "sha256sum or shasum required, exiting.."
+        exit 1
+    fi
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc
     gpg --verify SHASUMS256.txt.asc || exit 1
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
