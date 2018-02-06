@@ -101,7 +101,7 @@ with io.FileIO("versions.mk", "w") as file:
     file.write("DOCKERFILE="+DOCKERFILE+"\n")
     if options.debug_buildscript:
         file.write("DEBUG_BUILD=T\n")
-    else:
+    else
         file.write("IMAGE_TAG="+options.tag+"\n")
     if options.lts:
         file.write("LTS_TAG="+options.lts+"\n")
