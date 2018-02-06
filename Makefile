@@ -52,6 +52,10 @@ publish:
 	@echo $(DOCKER_PASS) | docker login --username $(DOCKER_USER) --password-stdin
 	docker push $(TARGET)
 ifndef DEBUG_BUILD
+ifdef LATEST
+	docker tag $(TARGET) $(IMAGE_NAME):latest
+	docker push $(IMAGE_NAME):latest
+endif
 ifdef MAJOR_TAG
 	docker tag $(TARGET) $(IMAGE_NAME):$(MAJOR_TAG)
 	docker push $(IMAGE_NAME):$(MAJOR_TAG)

@@ -25,7 +25,7 @@ parser.add_option('--os',
     dest='os',
     help='Operating System')
 
-parser.add_option('--version',
+parser.add_option('-v', '--version',
     action='store',
     dest='node_version',
     help='Version used to build node')
@@ -44,6 +44,11 @@ parser.add_option('--tag',
     action='store',
     dest='tag',
     help='image tag')
+
+parser.add_option('-l', '--latest',
+    action="store_true",
+    dest='latest',
+    help='is latest')
 
 parser.add_option('--lts',
     action='store',
@@ -97,10 +102,10 @@ with io.FileIO("versions.mk", "w") as file:
     file.write("IMAGE_TAG="+IMAGE_TAG+"\n")
     if options.debug_buildscript:
         file.write("DEBUG_BUILD=T\n")
-    else:
-        file.write("IMAGE_TAG="+options.tag+"\n")
     if options.lts:
         file.write("LTS_TAG="+options.lts+"\n")
+    if options.latest:
+        file.write("LATEST=T\n")
     if options.major:
         file.write("MAJOR_TAG="+options.major+"\n")
     if options.minor:

@@ -38,6 +38,7 @@ jobs:
                             --v8 "$V8" \
                             --npm "$NPM" \
                             --tag "$TAG" \
+                            --latest "$LATEST" \
                             --lts "$LTS" \
                             --major "$MAJOR" \
                             --minor "$MINOR"

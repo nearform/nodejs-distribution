@@ -2,7 +2,6 @@ NODE_VERSION=8.9.2
 OS=alpine3
 DOCKERFILE=./image/alpine3/Dockerfile
 IMAGE_TAG=8.9.2
-IMAGE_TAG=8.9.2
 LTS_TAG=Carbon
 MAJOR_TAG=8
 MINOR_TAG=8.9
