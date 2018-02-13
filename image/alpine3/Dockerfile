@@ -12,7 +12,7 @@ ENV \
 
 # This is the list of basic dependencies that all language Docker image can consume.
 RUN apk update && \
-    apk add findutils \
+    apk --no-cache --virtual add findutils \
         gettext \
         bash \
         python \
@@ -23,8 +23,7 @@ RUN apk update && \
         python \
         linux-headers \
         binutils-gold \
-        libstdc++ && \
-    rm -rf /var/cache/apk/*
+        libstdc++
 
 # Copy extra files to the image.
 COPY image/alpine3/root/ /
@@ -91,6 +90,19 @@ COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
 
 RUN ls /opt/app-root/etc/install_node_source.sh -Alh
+
+RUN apk del --purge findutils \
+    gettext \
+    bash \
+    python \
+    make \
+    gcc \
+    clang \
+    g++ \
+    python \
+    linux-headers \
+    binutils-gold \
+    libstdc++
 
 ### Atomic Help File - Write in Markdown, it will be converted to man format at build time.
 ### https://github.com/projectatomic/container-best-practices/blob/master/creating/help.adoc

@@ -85,7 +85,7 @@ archive:
 	git archive --prefix=build-tools/ --format=tar HEAD | gzip >dist/build-tools.tgz
 	cp -v versions.mk dist/versions.mk
 	git rev-parse HEAD >dist/build-tools.revision
-	cp -vR src/* dist/
+	cp -vR src/node-v$(NODE_VERSION)/* dist/
 	shasum dist/* >checksum
 	cp -v checksum dist/dist.checksum
 	tar czvf $(ARCHIVE) dist/*
