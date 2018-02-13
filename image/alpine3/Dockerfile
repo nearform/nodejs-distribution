@@ -100,8 +100,6 @@ COPY help/help.md /tmp/
 ### add licenses to this directory
 COPY image/alpine3/licenses /licenses
 
-RUN /opt/app-root/etc/install_node_source.sh
-
 USER 1001
 
 # Set the default CMD to print the usage
