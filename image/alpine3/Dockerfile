@@ -89,16 +89,16 @@ RUN ls /src
 COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
 
-RUN ls /opt/app-root/etc/install_node_source.sh -Alh
-
-RUN apk del --purge node_deps
-
 ### Atomic Help File - Write in Markdown, it will be converted to man format at build time.
 ### https://github.com/projectatomic/container-best-practices/blob/master/creating/help.adoc
 COPY help/help.md /tmp/
 
 ### add licenses to this directory
 COPY image/alpine3/licenses /licenses
+
+RUN /opt/app-root/etc/install_node_source.sh
+
+RUN apk del --purge node_deps
 
 USER 1001
 
