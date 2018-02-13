@@ -12,7 +12,7 @@ ENV \
 
 # This is the list of basic dependencies that all language Docker image can consume.
 RUN apk update && \
-    apk --no-cache --virtual add findutils \
+    apk --virtual node_deps add findutils \
         gettext \
         bash \
         python \
@@ -91,18 +91,7 @@ COPY ./contrib/ /opt/app-root
 
 RUN ls /opt/app-root/etc/install_node_source.sh -Alh
 
-RUN apk del --purge findutils \
-    gettext \
-    bash \
-    python \
-    make \
-    gcc \
-    clang \
-    g++ \
-    python \
-    linux-headers \
-    binutils-gold \
-    libstdc++
+RUN apk del --purge node_deps
 
 ### Atomic Help File - Write in Markdown, it will be converted to man format at build time.
 ### https://github.com/projectatomic/container-best-practices/blob/master/creating/help.adoc
