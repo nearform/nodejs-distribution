@@ -41,10 +41,11 @@ if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
     grep " node-v${NODE_VERSION}-linux-x64.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 else
-    if [ -d ${NODEDIR} ]; then
+    if [ -d ${NODEDIR}/.git ]; then
         cd ${NODEDIR}
         git fetch --all
     else
+        rm -Rf ${NODEDIR}
         git clone https://github.com/nodejs/node.git ${NODEDIR}
         cd ${NODEDIR}
     fi
