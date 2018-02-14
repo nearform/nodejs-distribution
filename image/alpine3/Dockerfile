@@ -12,17 +12,18 @@ ENV \
 
 # This is the list of basic dependencies that all language Docker image can consume.
 RUN apk update && \
+    apk add --no-cache \
+        libstdc++ \
     apk add findutils \
         gettext \
         bash \
-        python \
-        make \
-        gcc \
         clang \
-        g++ \
-        python \
-        linux-headers \
         binutils-gold \
+        g++ \
+        gcc \
+        linux-headers \
+        make \
+        python \
         libstdc++
 
 # Copy extra files to the image.
@@ -98,7 +99,11 @@ COPY image/alpine3/licenses /licenses
 
 RUN /opt/app-root/etc/install_node_source.sh
 
-RUN apk del --purge clang
+RUN apk del --purge clang \
+    findutils \
+    gettext \
+    bash \
+    binutils-gold
 
 USER 1001
 
