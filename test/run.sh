@@ -42,6 +42,7 @@ run_onbuild_build() {
 
 run_s2i_build() {
   echo "Running s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE}"
+  ls -Alh /usr/libexec/s2i
   s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE}
 }
 

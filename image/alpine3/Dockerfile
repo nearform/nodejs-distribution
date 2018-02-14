@@ -102,5 +102,7 @@ RUN apk del --purge clang
 
 USER 1001
 
+RUN ls $STI_SCRIPTS_PATH
+
 # Set the default CMD to print the usage
 CMD ${STI_SCRIPTS_PATH}/usage
