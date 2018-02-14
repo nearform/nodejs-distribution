@@ -11,10 +11,10 @@ ENV \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH
 
 # This is the list of basic dependencies that all language Docker image can consume.
-RUN apk update && \
-    apk add --no-cache \
+RUN apk update \
+    && apk add --no-cache \
         libstdc++ \
-    apk add findutils \
+    && apk add findutils \
         gettext \
         bash \
         clang \
@@ -23,8 +23,7 @@ RUN apk update && \
         gcc \
         linux-headers \
         make \
-        python \
-        libstdc++
+        python
 
 # Copy extra files to the image.
 COPY image/alpine3/root/ /
