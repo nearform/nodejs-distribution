@@ -38,6 +38,7 @@ build:
 .PHONY: squash
 squash:
 	docker-squash -f $(FROM) $(TARGET) -t $(TARGET)
+	docker run $(TARGET) ls -Alh /usr/libexec/s2i
 
 .PHONY: test
 test:
