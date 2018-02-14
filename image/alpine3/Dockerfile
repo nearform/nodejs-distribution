@@ -12,7 +12,7 @@ ENV \
 
 # This is the list of basic dependencies that all language Docker image can consume.
 RUN apk update && \
-    apk --virtual node_deps add findutils \
+    apk add findutils \
         gettext \
         bash \
         python \
@@ -98,7 +98,7 @@ COPY image/alpine3/licenses /licenses
 
 RUN /opt/app-root/etc/install_node_source.sh
 
-RUN apk del --purge node_deps
+RUN apk del --purge clang
 
 USER 1001
 
