@@ -101,7 +101,7 @@ RUN /opt/app-root/etc/install_node_source.sh
 RUN apk del --purge clang \
     findutils \
     gettext \
-    bash \
+    # bash \
     binutils-gold
 
 USER 1001
