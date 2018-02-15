@@ -21,7 +21,9 @@ else
 
     ./configure
     make -j$(getconf _NPROCESSORS_ONLN)
-    make -j$(getconf _NPROCESSORS_ONLN) test-only
+    if [ cat Makefile | grep test-only ]; then
+        make -j$(getconf _NPROCESSORS_ONLN) test-only
+    fi
     make install
 fi
 
