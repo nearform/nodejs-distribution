@@ -11,20 +11,19 @@ ENV \
     PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH
 
 # This is the list of basic dependencies that all language Docker image can consume.
-RUN apk update && \
-    apk add findutils \
+RUN apk update \
+    && apk add --no-cache \
+        libstdc++ \
+    && apk add findutils \
         gettext \
         bash \
-        python \
-        make \
-        gcc \
         clang \
-        g++ \
-        python \
-        linux-headers \
         binutils-gold \
-        libstdc++ && \
-    rm -rf /var/cache/apk/*
+        g++ \
+        gcc \
+        linux-headers \
+        make \
+        python
 
 # Copy extra files to the image.
 COPY image/alpine3/root/ /
@@ -90,8 +89,6 @@ RUN ls /src
 COPY ./s2i/ $STI_SCRIPTS_PATH
 COPY ./contrib/ /opt/app-root
 
-RUN ls /opt/app-root/etc/install_node_source.sh -Alh
-
 ### Atomic Help File - Write in Markdown, it will be converted to man format at build time.
 ### https://github.com/projectatomic/container-best-practices/blob/master/creating/help.adoc
 COPY help/help.md /tmp/
@@ -101,7 +98,15 @@ COPY image/alpine3/licenses /licenses
 
 RUN /opt/app-root/etc/install_node_source.sh
 
+RUN apk del --purge clang \
+    findutils \
+    gettext \
+    # bash \
+    binutils-gold
+
 USER 1001
+
+RUN ls $STI_SCRIPTS_PATH
 
 # Set the default CMD to print the usage
 CMD ${STI_SCRIPTS_PATH}/usage
