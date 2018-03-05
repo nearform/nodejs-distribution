@@ -23,6 +23,7 @@ RUN apk update \
         gcc \
         linux-headers \
         make \
+        git \
         python
 
 # Copy extra files to the image.
