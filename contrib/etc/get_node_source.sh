@@ -38,7 +38,12 @@ if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
     fi
     curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt.asc
     gpg --verify SHASUMS256.txt.asc || exit 1
-    curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
+    if [[ $NODE_VERSION = "10."* ]]; then
+        echo "getting rc 10 release until its GA"
+        curl -O -sSL https://nodejs.org/downoads/rc/v${NODE_VERSION}-rc.0/node-v${NODE_VERSION}-rc.0-linux-x64.tar.gz
+    else
+        curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz
+    fi
     grep " node-v${NODE_VERSION}-linux-x64.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 else
     if [ -d ${NODEDIR}/.git ]; then
