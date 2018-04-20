@@ -24,6 +24,8 @@ s2i_args="--pull-policy never "
 # TODO: This should be part of the image metadata
 test_port=8080
 
+set -e
+
 image_exists() {
   docker inspect $1 &>/dev/null
 }
@@ -47,7 +49,7 @@ run_s2i_build() {
 
 run_s2i_build_incremental() {
   echo "Running s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE} --incremental=true --pull-policy=never"
-  s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE} --incremental=true
+  s2i build ${s2i_args} ${test_dir}/test-app ${BUILDER} ${APP_IMAGE} --incremental=true
 }
 
 prepare() {
