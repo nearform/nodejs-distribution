@@ -55,6 +55,7 @@ ARG NODE_VERSION
 ARG NPM_VERSION
 ARG V8_VERSION
 ARG PREBUILT
+ARG FROM_DATA
 
 ENV NPM_RUN=start \
     NODE_VERSION=${NODE_VERSION} \
@@ -81,7 +82,9 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
     name="alpine3-s2i-nodejs" \
     vendor="nearForm Ltd" \
     summary="Alpine based s2i image for NodeJS applications" \
-    description="Alpine based s2i image for NodeJS applications"
+    description="Alpine based s2i image for NodeJS applications" \
+    nf.from="${FROM_DATA}" \
+    nf.node.version="${NODE_VERSION}"
 
 RUN mkdir /src
 

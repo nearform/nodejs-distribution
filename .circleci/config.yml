@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-        - image: nearform/docker_circleci:0.0.7
+        - image: nearform/docker_circleci:0.0.10
     resource_class: xlarge
     steps:
       - checkout
@@ -16,12 +16,13 @@ jobs:
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                export VERSION=6.12.1
+                export VERSION=8.11.1
                 export OS=centos7
-                export V8=5.1.281.109
-                export NPM=3.10.10
+                export V8=6.2.414.46
+                export NPM=5.6.0
                 export TAG=test-only
                 export DEBUG_BUILD=T
+                source contrib/etc/util.sh
 
                 ./configure --version "$VERSION" \
                         --os "$OS" \
@@ -29,6 +30,7 @@ jobs:
                         --npm "$NPM" \
                         --tag "$TAG" \
                         --debug \
+                        --fromdata "$(getBaseImageForOs)" \
                         --prebuilt
             else
                 source contrib/etc/util.sh
@@ -38,6 +40,7 @@ jobs:
                             --v8 "$V8" \
                             --npm "$NPM" \
                             --tag "$TAG" \
+                            --fromdata "$(getBaseImageForOs)" \
                             --latest "$LATEST" \
                             --lts "$LTS" \
                             --major "$MAJOR" \

@@ -1,4 +1,4 @@
-FROM=$(shell cat $(DOCKERFILE) | grep FROM | cut -d' ' -f2)
+FROM=$(shell cat $(DOCKERFILE) | grep "FROM " | cut -d' ' -f2)
 DOCKERFILE_PATH=$(PWD)/image/$(OS)
 
 SLASH := /
@@ -27,13 +27,24 @@ all: build squash test
 
 .PHONY: build
 build:
-	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/ && \
+	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/
+ifdef FROM_DATA
+	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
+	--build-arg NODE_VERSION=$(NODE_VERSION) \
+	--build-arg NPM_VERSION=$(NPM_VERSION) \
+	--build-arg V8_VERSION=$(V8_VERSION) \
+	--build-arg PREBUILT=$(PREBUILT) \
+	--build-arg FROM_DATA='$(FROM_DATA)' \
+	-t $(TARGET) .
+else
 	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
 	--build-arg NODE_VERSION=$(NODE_VERSION) \
 	--build-arg NPM_VERSION=$(NPM_VERSION) \
 	--build-arg V8_VERSION=$(V8_VERSION) \
 	--build-arg PREBUILT=$(PREBUILT) \
 	-t $(TARGET) .
+endif
+
 
 .PHONY: squash
 squash:

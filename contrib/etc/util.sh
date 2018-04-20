@@ -55,3 +55,39 @@ shouldPublish() {
     [ "$RH_V" -le "$MAJOR" ] && return
     return
 }
+
+getBaseImageForOs() {
+    # echo ${OS}
+    FROM=$(cat image/${OS}/Dockerfile | grep "FROM " | awk -F " " '{print $2}')
+    SLASHES=$(echo $FROM | awk -F"/" '{print NF-1}')
+    if [[ $SLASHES = 1 ]]; then
+        FROM_OWNER=$(echo $FROM | awk -F '/' '{print $1}')
+        FROM=$(echo $FROM | awk -F '/' '{print $2}')
+        # echo $FROM
+    elif [[ $SLASHES = 2 ]]; then
+        FROM_OWNER=$(echo $FROM | awk -F '/' '{print $1}')
+        FROM=$(echo $FROM | awk -F '/' '{print $2"%252F"$3}')
+        # echo $FROM
+    else
+        FROM_OWNER="library"
+    fi
+    FROM_IMAGE=$(echo $FROM | awk -F ':' '{print $1}')
+    if [[ $FROM = *":"* ]]; then
+        FROM_TAG=$(echo $FROM | awk -F ':' '{print $2}')
+    else
+        FROM_TAG="latest"
+    fi
+    if [[ "$OS" = "alpine3" || "$OS" = "centos7" ]]; then
+        URL="https://hub.docker.com/v2/repositories/${FROM_OWNER}/${FROM_IMAGE}/tags/${FROM_TAG}/"
+        FROM_DATETIME=$(curl -s $URL | jq -r '.last_updated')
+    fi
+    if [[ "$OS" = "rhel7" ]]; then
+        URL="https://www.redhat.com//wapps/containercatalog/rest/v1/repository/registry.access.redhat.com/${FROM_IMAGE}"
+        JSON=$(curl -s $URL)
+        FROM_DATETIME=$(echo $JSON | jq -r '.processed[0].images[0].repositories[0].push_date')
+        FROM_TAG=$(echo $JSON | jq -r '.processed[0].images[0].repositories[0].tags[] | select(.name | contains("1-")).name')
+        FROM_IMAGE=$(echo $FROM_IMAGE | sed 's#%252F#/#')
+    fi
+    # echo $URL
+    echo "{ \"from\": { \"image\": \"$FROM_OWNER/$FROM_IMAGE\", \"tag\": \"$FROM_TAG\", \"last_updated\": \"$FROM_DATETIME\" } }"
+}
