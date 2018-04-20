@@ -27,16 +27,24 @@ all: build squash test
 
 .PHONY: build
 build:
-	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/ && \
+	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/
+ifdef FROM_DATA
 	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
 	--build-arg NODE_VERSION=$(NODE_VERSION) \
 	--build-arg NPM_VERSION=$(NPM_VERSION) \
 	--build-arg V8_VERSION=$(V8_VERSION) \
 	--build-arg PREBUILT=$(PREBUILT) \
-ifdef FROM
-	--build-arg FROM=$(FROM) \
-endif
+	--build-arg FROM='$(FROM_DATA)' \
 	-t $(TARGET) .
+else
+	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
+	--build-arg NODE_VERSION=$(NODE_VERSION) \
+	--build-arg NPM_VERSION=$(NPM_VERSION) \
+	--build-arg V8_VERSION=$(V8_VERSION) \
+	--build-arg PREBUILT=$(PREBUILT) \
+	-t $(TARGET) .
+endif
+
 
 .PHONY: squash
 squash:

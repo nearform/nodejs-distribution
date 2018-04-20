@@ -34,8 +34,8 @@ jobs:
                         --prebuilt
             else
                 source contrib/etc/util.sh
-                export FROM="$(getBaseImageForOs)"
-                echo $FROM
+                export FROM_DATA="$(getBaseImageForOs)"
+                echo $FROM_DATA
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
