@@ -65,9 +65,9 @@ parser.add_option('--minor',
     dest='minor',
     help='image major tag if any')
 
-parser.add_option('--formdata',
+parser.add_option('--fromdata',
     action='store',
-    dest='formdata',
+    dest='fromdata',
     help='base image data')
 
 parser.add_option('--debug',
@@ -118,8 +118,8 @@ with io.FileIO("versions.mk", "w") as file:
     file.write("NPM_VERSION="+options.npm+"\n")
     if options.prebuilt:
         file.write("PREBUILT=T\n")
-    if options.formdata:
-        file.write("FORM_DATA="+options.formdata)
+    if options.fromdata:
+        file.write("FORM_DATA="+options.fromdata)
 
 with io.FileIO("versions.mk", "r") as file:
     print file.read()
