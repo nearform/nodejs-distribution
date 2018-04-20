@@ -33,6 +33,9 @@ build:
 	--build-arg NPM_VERSION=$(NPM_VERSION) \
 	--build-arg V8_VERSION=$(V8_VERSION) \
 	--build-arg PREBUILT=$(PREBUILT) \
+ifdef FROM
+	--build-arg FROM=$(FROM) \
+endif
 	-t $(TARGET) .
 
 .PHONY: squash

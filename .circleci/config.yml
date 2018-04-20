@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-        - image: nearform/docker_circleci:0.0.7
+        - image: nearform/docker_circleci:0.0.10
     resource_class: xlarge
     steps:
       - checkout
@@ -22,6 +22,8 @@ jobs:
                 export NPM=3.10.10
                 export TAG=test-only
                 export DEBUG_BUILD=T
+                export FROM="$(getBaseImageForOs)"
+                echo $FROM
 
                 ./configure --version "$VERSION" \
                         --os "$OS" \
@@ -32,6 +34,8 @@ jobs:
                         --prebuilt
             else
                 source contrib/etc/util.sh
+                export FROM="$(getBaseImageForOs)"
+                echo $FROM
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
