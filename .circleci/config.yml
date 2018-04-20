@@ -22,8 +22,8 @@ jobs:
                 export NPM=3.10.10
                 export TAG=test-only
                 export DEBUG_BUILD=T
-                export FROM="$(getBaseImageForOs)"
-                echo $FROM
+                export FROM_DATA="$(getBaseImageForOs)"
+                echo $FROM_DATA
 
                 ./configure --version "$VERSION" \
                         --os "$OS" \
