@@ -104,6 +104,7 @@ with io.FileIO("versions.mk", "w") as file:
     file.write("OS="+options.os+"\n")
     file.write("DOCKERFILE="+DOCKERFILE+"\n")
     file.write("IMAGE_TAG="+IMAGE_TAG+"\n")
+    file.write("V8_VERSION="+options.v8+"\n")
     if options.debug_buildscript:
         file.write("DEBUG_BUILD=T\n")
     if options.lts:
