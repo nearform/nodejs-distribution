@@ -119,7 +119,7 @@ with io.FileIO("versions.mk", "w") as file:
     if options.prebuilt:
         file.write("PREBUILT=T\n")
     if options.fromdata:
-        file.write("FORM_DATA="+options.fromdata)
+        file.write("FROM_DATA="+options.fromdata)
 
 with io.FileIO("versions.mk", "r") as file:
     print file.read()

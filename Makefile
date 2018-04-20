@@ -1,4 +1,4 @@
-FROM=$(shell cat $(DOCKERFILE) | grep FROM | cut -d' ' -f2)
+FROM=$(shell cat $(DOCKERFILE) | grep "FROM " | cut -d' ' -f2)
 DOCKERFILE_PATH=$(PWD)/image/$(OS)
 
 SLASH := /
