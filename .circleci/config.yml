@@ -16,10 +16,10 @@ jobs:
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                export VERSION=6.12.1
+                export VERSION=8.11.1
                 export OS=centos7
-                export V8=5.1.281.109
-                export NPM=3.10.10
+                export V8=6.2.414.46
+                export NPM=5.6.0
                 export TAG=test-only
                 export DEBUG_BUILD=T
                 source contrib/etc/util.sh

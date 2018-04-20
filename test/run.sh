@@ -42,7 +42,7 @@ run_onbuild_build() {
 
 run_s2i_build() {
   echo "Running s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE}"
-  s2i build ${s2i_args} file://${test_dir}/test-app ${BUILDER} ${APP_IMAGE}
+  s2i build ${s2i_args} ${test_dir}/test-app ${BUILDER} ${APP_IMAGE}
 }
 
 run_s2i_build_incremental() {
