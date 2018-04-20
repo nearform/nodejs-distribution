@@ -22,6 +22,7 @@ jobs:
                 export NPM=3.10.10
                 export TAG=test-only
                 export DEBUG_BUILD=T
+                source contrib/etc/util.sh
 
                 ./configure --version "$VERSION" \
                         --os "$OS" \
