@@ -10,7 +10,7 @@ ARG NODE_VERSION
 ARG NPM_VERSION
 ARG V8_VERSION
 ARG PREBUILT
-ARG FROM
+ARG FROM_DATA
 
 ENV NPM_RUN=start \
     NODE_VERSION=${NODE_VERSION} \
@@ -35,7 +35,7 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
     vendor="nearForm Ltd" \
     summary="Rhel7 based s2i image for NodeJS applications" \
     description="Rhel7 based s2i image for NodeJS applications" \
-    nf.from="${FROM}" \
+    nf.from="${FROM_DATA}" \
     nf.node.version="${NODE_VERSION}"
 
 COPY ./src/ /src
