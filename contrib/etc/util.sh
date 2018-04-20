@@ -58,7 +58,7 @@ shouldPublish() {
 
 getBaseImageForOs() {
     # echo ${OS}
-    FROM=$(cat image/${OS}/Dockerfile | grep FROM | awk -F " " '{print $2}')
+    FROM=$(cat image/${OS}/Dockerfile | grep "FROM " | awk -F " " '{print $2}')
     SLASHES=$(echo $FROM | awk -F"/" '{print NF-1}')
     if [[ $SLASHES = 1 ]]; then
         FROM_OWNER=$(echo $FROM | awk -F '/' '{print $1}')
