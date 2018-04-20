@@ -22,8 +22,6 @@ jobs:
                 export NPM=3.10.10
                 export TAG=test-only
                 export DEBUG_BUILD=T
-                export FROM_DATA="$(getBaseImageForOs)"
-                echo $FROM_DATA
 
                 ./configure --version "$VERSION" \
                         --os "$OS" \
@@ -31,17 +29,17 @@ jobs:
                         --npm "$NPM" \
                         --tag "$TAG" \
                         --debug \
+                        --fromdata "$(getBaseImageForOs)" \
                         --prebuilt
             else
                 source contrib/etc/util.sh
-                export FROM_DATA="$(getBaseImageForOs)"
-                echo $FROM_DATA
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
                             --v8 "$V8" \
                             --npm "$NPM" \
                             --tag "$TAG" \
+                            --fromdata "$(getBaseImageForOs)" \
                             --latest "$LATEST" \
                             --lts "$LTS" \
                             --major "$MAJOR" \

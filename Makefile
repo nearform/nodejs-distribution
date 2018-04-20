@@ -34,7 +34,7 @@ ifdef FROM_DATA
 	--build-arg NPM_VERSION=$(NPM_VERSION) \
 	--build-arg V8_VERSION=$(V8_VERSION) \
 	--build-arg PREBUILT=$(PREBUILT) \
-	--build-arg _DATA='$(FROM_DATA)' \
+	--build-arg FROM_DATA='$(FROM_DATA)' \
 	-t $(TARGET) .
 else
 	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
