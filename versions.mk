@@ -7,4 +7,4 @@ MAJOR_TAG=10
 MINOR_TAG=10.0
 IMAGE_NAME=nearform/alpine3-s2i-nodejs
 NPM_VERSION=5.6.0
-V8
+V8=6.2.414.46
