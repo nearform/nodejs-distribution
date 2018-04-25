@@ -23,8 +23,7 @@ for key in \
     gpg -q --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
     gpg -q --keyserver pgp.mit.edu --recv-keys "$key" || \
     gpg -q --keyserver keyserver.pgp.com --recv-keys "$key" || \
-    gpg -q --keyserver pool.sks-keyservers.net --recv-keys "$key"
-    ;
+    gpg -q --keyserver pool.sks-keyservers.net --recv-keys "$key"; \
     echo "$key:6" | gpg --import-ownertrust
 done
 
