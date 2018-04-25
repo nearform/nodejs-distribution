@@ -80,6 +80,7 @@ getBaseImageForOs() {
     if [[ "$OS" = "alpine3" || "$OS" = "centos7" ]]; then
         URL="https://hub.docker.com/v2/repositories/${FROM_OWNER}/${FROM_IMAGE}/tags/${FROM_TAG}/"
         FROM_DATETIME=$(curl -s $URL | jq -r '.last_updated')
+        FROM_SHA=$(skopeo inspect docker://docker.io/${FROM_IMAGE} | jq -r '.Digest')
     fi
     if [[ "$OS" = "rhel7" ]]; then
         URL="https://www.redhat.com//wapps/containercatalog/rest/v1/repository/registry.access.redhat.com/${FROM_IMAGE}"
@@ -87,7 +88,8 @@ getBaseImageForOs() {
         FROM_DATETIME=$(echo $JSON | jq -r '.processed[0].images[0].repositories[0].push_date')
         FROM_TAG=$(echo $JSON | jq -r '.processed[0].images[0].repositories[0].tags[] | select(.name | contains("1-")).name')
         FROM_IMAGE=$(echo $FROM_IMAGE | sed 's#%252F#/#')
+        FROM_SHA=$(skopeo inspect docker://$FROM_OWNER/$FROM_IMAGE | jq -r '.Digest')
     fi
     # echo $URL
-    echo "{ \"from\": { \"image\": \"$FROM_OWNER/$FROM_IMAGE\", \"tag\": \"$FROM_TAG\", \"last_updated\": \"$FROM_DATETIME\" } }"
+    echo "{ \"from\": { \"image\": \"$FROM_OWNER/$FROM_IMAGE\", \"tag\": \"$FROM_TAG\", \"last_updated\": \"$FROM_DATETIME\", \"sha\":\"FROM_SHA\" } }"
 }
