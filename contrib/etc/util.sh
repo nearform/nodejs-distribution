@@ -91,5 +91,5 @@ getBaseImageForOs() {
         FROM_SHA=$(skopeo inspect docker://$FROM_OWNER/$FROM_IMAGE | jq -r '.Digest')
     fi
     # echo $URL
-    echo "{ \"from\": { \"image\": \"$FROM_OWNER/$FROM_IMAGE\", \"tag\": \"$FROM_TAG\", \"last_updated\": \"$FROM_DATETIME\", \"sha\":\"FROM_SHA\" } }"
+    echo "{ \"from\": { \"image\": \"$FROM_OWNER/$FROM_IMAGE\", \"tag\": \"$FROM_TAG\", \"last_updated\": \"$FROM_DATETIME\", \"sha\":\"$FROM_SHA\" } }"
 }
