@@ -69,6 +69,7 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
+                    echo $(getProjectSecret)
                     echo $(getProjectSecret) | docker login -u unused registry.rhc4tp.openshift.com:443 --password-stdin
                     export RH_PID=$(getProjectId)
                     make redhat_publish

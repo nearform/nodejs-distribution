@@ -88,6 +88,7 @@ endif
 redhat_publish:
 	echo "Publishing to RedHat repository"
 ifndef DEBUG_BUILD
+	echo $(RH_TARGET)
 	docker tag nearform/$(OS)-s2i-nodejs:$(TAG) $(RH_TARGET)
 	docker push $(RH_TARGET)
 endif
