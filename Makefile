@@ -14,7 +14,8 @@ PREBUILT := N
 include versions.mk
 
 IMG_STRING=$(shell echo $(IMAGE_NAME) | cut -d'/' -f2 | sed -e 's/$(OS)/nearform/g;')
-RH_TARGET=registry.rhc4tp.openshift.com:443/$(RH_PID)/$(IMG_STRING):$(IMAGE_TAG)
+# RH_TARGET=registry.rhc4tp.openshift.com:443/$(RH_PID)/$(IMG_STRING):$(IMAGE_TAG)
+RH_TARGET=scan.connect.redhat.com/$(RH_PID)/$(IMG_STRING):$(IMAGE_TAG)
 TARGET=$(IMAGE_NAME):$(IMAGE_TAG)
 ARCHIVE_NAME=$(IMAGE_NAME)-$(IMAGE_TAG)
 ARCHIVE=sources-$(subst $(SLASH),$(DASH),$(ARCHIVE_NAME)).tgz

@@ -30,7 +30,7 @@
         },{
           "name": "Node.js 10.x LTS Distribution",
           "id": "02-006151",
-          "version": "9",
+          "version": "10",
           "project_id": "p16716890402cfe3b4e348ce95b85d795c54ae69f2e",
           "repository_name": "rhel7-s2i-nodejs10",
           "secret_env_name": "NODEJS_10_SECRET"
