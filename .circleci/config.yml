@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-        - image: nearform/docker_circleci:0.0.10
+        - image: nearform/docker_circleci:0.0.11
     resource_class: xlarge
     steps:
       - checkout
