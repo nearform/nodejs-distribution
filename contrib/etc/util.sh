@@ -80,7 +80,7 @@ getBaseImageForOs() {
     if [[ "$OS" = "alpine3" || "$OS" = "centos7" ]]; then
         URL="https://hub.docker.com/v2/repositories/${FROM_OWNER}/${FROM_IMAGE}/tags/${FROM_TAG}/"
         FROM_DATETIME=$(curl -s $URL | jq -r '.last_updated')
-        FROM_SHA=$(skopeo inspect docker://docker.io/${FROM_IMAGE} | jq -r '.Digest')
+        FROM_SHA=$(skopeo inspect docker://docker.io/${FROM_OWNER}/${FROM_IMAGE} | jq -r '.Digest')
     fi
     if [[ "$OS" = "rhel7" ]]; then
         URL="https://www.redhat.com//wapps/containercatalog/rest/v1/repository/registry.access.redhat.com/${FROM_IMAGE}"
