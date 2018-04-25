@@ -20,7 +20,11 @@ for key in \
         C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
         DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
     ; do
-    gpg -q --keyserver pool.sks-keyservers.net --recv-keys "$key";
+    gpg -q --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg -q --keyserver pgp.mit.edu --recv-keys "$key" || \
+    gpg -q --keyserver keyserver.pgp.com --recv-keys "$key" || \
+    gpg -q --keyserver pool.sks-keyservers.net --recv-keys "$key"
+    ;
     echo "$key:6" | gpg --import-ownertrust
 done
 
