@@ -33,6 +33,7 @@ jobs:
                         --fromdata "$(getBaseImageForOs)" \
                         --prebuilt
             else
+                export DEBUG_BUILD=T
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
