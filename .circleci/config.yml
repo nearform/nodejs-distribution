@@ -16,9 +16,9 @@ jobs:
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                export VERSION=8.11.1
-                export OS=centos7
-                export V8=6.2.414.46
+                export VERSION=10.0.0
+                export OS=rhel7
+                export V8=6.6.346.24
                 export NPM=5.6.0
                 export TAG=test-only
                 export DEBUG_BUILD=T
@@ -59,10 +59,10 @@ jobs:
       - run:
           name: Test
           command: make test
-      - run:
-          name: Publish
-          command: |
-            make publish
+    #   - run:
+    #       name: Publish
+    #       command: |
+    #         make publish
       - run:
           name: Publish to Red Hat
           command: |
@@ -77,22 +77,22 @@ jobs:
             else
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
             fi
-      - run:
-          name: Archive
-          command: |
-            if [ "$OS" == "rhel7" ]; then
-                make archive
-            else
-                echo "OS is not [rhel7] not archiving"
-            fi
-      - run:
-          name: Upload
-          command: |
-            if [ "$OS" == "rhel7" ]; then
-                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
-                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
-                make upload
-            else
-                echo "OS is not [rhel7] not uploading"
-            fi
+    #   - run:
+    #       name: Archive
+    #       command: |
+    #         if [ "$OS" == "rhel7" ]; then
+    #             make archive
+    #         else
+    #             echo "OS is not [rhel7] not archiving"
+    #         fi
+    #   - run:
+    #       name: Upload
+    #       command: |
+    #         if [ "$OS" == "rhel7" ]; then
+    #             echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+    #             echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+    #             make upload
+    #         else
+    #             echo "OS is not [rhel7] not uploading"
+    #         fi
 
