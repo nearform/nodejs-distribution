@@ -33,7 +33,6 @@ jobs:
                         --fromdata "$(getBaseImageForOs)" \
                         --prebuilt
             else
-                export DEBUG_BUILD=T
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
@@ -60,40 +59,39 @@ jobs:
       - run:
           name: Test
           command: make test
-    #   - run:
-    #       name: Publish
-    #       command: |
-    #         make publish
+      - run:
+          name: Publish
+          command: |
+            make publish
       - run:
           name: Publish to Red Hat
           command: |
-            #if [ "$OS" == "rhel7" ]; then
+            if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
-                    echo $(getProjectSecret)
                     echo $(getProjectSecret) | docker login -u unused scan.connect.redhat.com --password-stdin
                     export RH_PID=$(getProjectId)
                     make redhat_publish
                 fi
-            #else
-            #    echo "OS is not [rhel7] not publishing to Red Hat Catalog"
-            #fi
-    #   - run:
-    #       name: Archive
-    #       command: |
-    #         if [ "$OS" == "rhel7" ]; then
-    #             make archive
-    #         else
-    #             echo "OS is not [rhel7] not archiving"
-    #         fi
-    #   - run:
-    #       name: Upload
-    #       command: |
-    #         if [ "$OS" == "rhel7" ]; then
-    #             echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
-    #             echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
-    #             make upload
-    #         else
-    #             echo "OS is not [rhel7] not uploading"
-    #         fi
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+      - run:
+          name: Archive
+          command: |
+            if [ "$OS" == "rhel7" ]; then
+                make archive
+            else
+                echo "OS is not [rhel7] not archiving"
+            fi
+      - run:
+          name: Upload
+          command: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                make upload
+            else
+                echo "OS is not [rhel7] not uploading"
+            fi
 
