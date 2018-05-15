@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-        - image: nearform/docker_circleci:0.0.10
+        - image: nearform/docker_circleci:0.0.11
     resource_class: xlarge
     steps:
       - checkout
@@ -16,9 +16,9 @@ jobs:
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                export VERSION=8.11.1
-                export OS=centos7
-                export V8=6.2.414.46
+                export VERSION=10.0.0
+                export OS=rhel7
+                export V8=6.6.346.24
                 export NPM=5.6.0
                 export TAG=test-only
                 export DEBUG_BUILD=T
@@ -69,7 +69,7 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
-                    echo $(getProjectSecret) | docker login -u unused registry.rhc4tp.openshift.com:443 --password-stdin
+                    echo $(getProjectSecret) | docker login -u unused scan.connect.redhat.com --password-stdin
                     export RH_PID=$(getProjectId)
                     make redhat_publish
                 fi
