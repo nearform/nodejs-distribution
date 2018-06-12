@@ -17,7 +17,7 @@ jobs:
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
                 export VERSION=10.0.0
-                export OS=rhel7
+                export OS=centos7
                 export V8=6.6.346.24
                 export NPM=5.6.0
                 export TAG=test-only
@@ -60,9 +60,11 @@ jobs:
           name: Test
           command: make test
       - run:
-          name: Publish
+          name: Publish to Docker Hub
           command: |
-            if [ "$OS" != "rhel7" ]; then
+            if [ "$OS" == "rhel7" ]; then
+                OS is [rhel7] not publishing to Docker Hub
+            else
                 make publish
             fi
       - run:
