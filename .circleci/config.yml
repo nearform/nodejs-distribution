@@ -62,7 +62,9 @@ jobs:
       - run:
           name: Publish
           command: |
-            make publish
+            if [ "$OS" != "rhel7" ]; then
+                make publish
+            fi
       - run:
           name: Publish to Red Hat
           command: |
