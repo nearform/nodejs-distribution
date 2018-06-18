@@ -63,7 +63,7 @@ jobs:
           name: Publish to Docker Hub
           command: |
             if [ "$OS" == "rhel7" ]; then
-                OS is [rhel7] not publishing to Docker Hub
+                echo "OS is [rhel7] not publishing to Docker Hub"
             else
                 make publish
             fi
