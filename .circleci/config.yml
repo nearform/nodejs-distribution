@@ -8,6 +8,12 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Prepare
+          command: |
+            echo "Temporary fix for docker_circleci:0.0.11"
+            sudo apt-get upgrade
+            sudo apt-get install -qqy make-guile
+      - run:
           name: Info
           command: |
             make envinfo
@@ -17,12 +23,13 @@ jobs:
       - run:
           name: Build
           command: |
+            source ./contrib/etc/util.sh
             if [[-z SPEC || -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
+                export SPEC=buildscript-debug
                 export FROM_DATA="$(getBaseImageForOs)"
             else
               if [[ -z SPEC ]]; then
-                source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
@@ -44,7 +51,7 @@ jobs:
                  make print-SPEC_COMMENT
               fi
             fi
-
+            make spec-help
             make build
       - run:
           name: Docker squash
