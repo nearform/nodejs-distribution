@@ -30,6 +30,16 @@ For more information about using these images with OpenShift, please see the
 official [OpenShift Documentation](https://docs.openshift.org/latest/using_images/s2i_images/nodejs.html).
 
 ### Building instructions for CircleCI ###
+
+#### Spec-file based build
+The new build system uses "spec files" available in `specs` directory. They contain versioned sets of variables that were previously handled externally or through `./configure` script.
+You can pass them to build with `SPEC` environment variable or like this: `make SPEC=specs/centos7-node10.6 build`.
+All old variables are still available for overriding.
+
+For example of build spec, look at `specs/example`.
+
+#### old build approach 
+
 The configuration can be found in /.circleci/config.json
 The build is configured using the following [build parameters](https://circleci.com/docs/2.0/env-vars/#injecting-environment-variables-with-the-api).
 * OS, Operating System, i.e. "rhel7"
@@ -55,6 +65,8 @@ Node.js versions currently provided:
 * **`8.9.3`**: (8.x, latest, LTS, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs8), supported)
 * **`6.12.2`**: (6.x, Boron, LTS, supported)
 <!-- versions.end -->
+
+In the future, supported builds will be versioned inside `specs` directory
 
 ## Source2image Usage
 
@@ -163,11 +175,14 @@ oc delete is/nodejs -n openshift ; oc create -n openshift -f https://raw.githubu
 
 ## Building your own Builder images
 
-Clone a copy of this repo to fetch the build sources:
+Clone a copy of this repo to fetch the build sources then
 
+### Requirements - make-guile
+
+You need Guile-enabled GNU Make.
+On Ubuntu, you can install it with:
 ```
-git clone https://github.com/nearform/rhel7-s2i-nodejs.git
-cd rhel7-s2i-nodejs
+sudo apt-get install make-guile
 ```
 
 ### Requirements - docker-squash
@@ -177,5 +192,5 @@ cd rhel7-s2i-nodejs
 To build your own S2I Node.js builder images from scratch, run:
 
 ```
-make all
+make SPEC=specs/SPECFILE all
 ```
