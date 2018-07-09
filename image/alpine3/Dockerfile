@@ -84,7 +84,7 @@ LABEL io.k8s.description="Platform for building and running Node.js applications
     summary="Alpine based s2i image for NodeJS applications" \
     description="Alpine based s2i image for NodeJS applications" \
     nf.from="${FROM_DATA}" \
-    nf.node.version="${NODE_VERSION}"
+    nf.nodejs="{\"nodejs\": { \"version\": \"${NODE_VERSION}\", \"v8\": \"${V8_VERSION}\", \"npm\": \"${npm_VERSION}\",} }"
 
 RUN mkdir /src
 
