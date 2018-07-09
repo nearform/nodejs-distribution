@@ -44,16 +44,15 @@ The build is configured using the following [build parameters](https://circleci.
 
 For the Red Hat images, there is a configurationfile at `.config/config.json` to map node.js versions to Red Hat projects. In the [Red Hat Catalog](https://access.redhat.com/containers/#/vendor/nearform) the different versions are organised in their own repository.
 In order to push images to the Red Hat cetification registry a secret has to be provided for each project.
-The configurationfile provides the ENV variables used to obtain a secret for each project, i.e. `NODEJS_6_SECRET`.
+The configurationfile provides the ENV variables used to obtain a secret for each project, i.e. `NODEJS_8_SECRET`.
 
 ## Versions
 
 Node.js versions currently provided:
 
 <!-- versions.start -->
-* **`9.3.0`**: (9.x, latest, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs9), unsupported)
-* **`8.9.3`**: (8.x, latest, LTS, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs8), supported)
-* **`6.12.2`**: (6.x, Boron, LTS, supported)
+* **`8`**: (8.x, latest, LTS, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs8), supported)
+* **`10`**: (10.x, latest, [Red Hat Catalog](https://access.redhat.com/containers/?tab=overview#/registry.connect.redhat.com/nearform/nearform-s2i-nodejs10), unsupported)
 <!-- versions.end -->
 
 ## Source2image Usage
