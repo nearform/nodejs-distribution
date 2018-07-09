@@ -9,19 +9,23 @@ Commercial support for LTS versions is available by [contacting](https://www.nea
 
 ## Flavors
 We build and images based on various Operating Systems:
-* Rhel 7
-
-  [![docker hub stats](http://dockeri.co/image/nearform/rhel7-s2i-nodejs)](https://hub.docker.com/r/nearform/rhel7-s2i-nodejs/)
 * Centos 7
 
   [![docker hub stats](http://dockeri.co/image/nearform/centos7-s2i-nodejs)](https://hub.docker.com/r/nearform/centos7-s2i-nodejs/)
+
+  [![Anchore Image Overview](https://anchore.io/service/badges/image/f1218ba21d522a569a4e06ca2993c68c008a16f5fb7983ffbc606e971be9e7d2)](https://anchore.io/image/dockerhub/nearform%2Fcentos7-s2i-nodejs%3Alatest)
+
 * Alpine 3
 
   [![docker hub stats](http://dockeri.co/image/nearform/alpine3-s2i-nodejs)](https://hub.docker.com/r/nearform/alpine3-s2i-nodejs/)
 
+  [![Anchore Image Overview](https://anchore.io/service/badges/image/3211aee586fc6d262a2373fd51c9466418931b73cdee25e74eca0ae5c190520f)](https://anchore.io/image/dockerhub/nearform%2Falpine3-s2i-nodejs%3Alatest)
+
 The image can be used like any other image specifying it in your Dockerfile like this:
 ```
 FROM nearform/centos7-s2i-nodejs
+...
+WORKDIR /opt/app-root/src
 ...
 ```
 The Images are also prepared for use with [s2i](https://github.com/openshift/source-to-image/), a clean way to run your Node.js code in a controlled, squashed and secure image.
@@ -32,7 +36,7 @@ official [OpenShift Documentation](https://docs.openshift.org/latest/using_image
 ### Building instructions for CircleCI ###
 The configuration can be found in /.circleci/config.json
 The build is configured using the following [build parameters](https://circleci.com/docs/2.0/env-vars/#injecting-environment-variables-with-the-api).
-* OS, Operating System, i.e. "rhel7"
+* OS, Operating System, i.e. "centos7"
 * VERSION, node.js version i.e."8.9.3"
 * V8, V8 version i.e. "6.1.534.48"
 * NPM, npm version i.e. "5.5.1"
@@ -66,25 +70,15 @@ and can be run either by OpenShift Origin or by Docker.
 The [`oc` command-line tool](https://github.com/openshift/origin/releases) can be used to start a build, layering your desired nodejs `REPO_URL` sources into a centos7 image with your selected `RELEASE` of Node.js via the following command format:
 
 ```
-oc new-app nearform/rhel7-s2i-nodejs:RELEASE~REPO_URL
+oc new-app nearform/centos7-s2i-nodejs:RELEASE~REPO_URL
 ```
 
 For example, you can run a build (including `npm install` steps), using  [`s2i-nodejs`](http://github.com/bucharest-gold/s2i-nodejs) example repo, and the `latest` release of
 Node.js with:
 
 ```
-oc new-app nearform/rhel7-s2i-nodejs:latest~https://github.com/bucharest-gold/s2i-nodejs
+oc new-app nearform/centos7-s2i-nodejs:latest~https://github.com/bucharest-gold/s2i-nodejs
 ```
-
-<!--
-Or, to run the latest `lts-6` release:
-
-```
-oc new-app nearform/rhel7-s2i-nodejs:lts-6~https://github.com/bucharest-gold/s2i-nodejs
-```
-
-You can try using any of the available tagged Node.js releases, and your own repo sources - as long as your application source will init correctly with `npm start`, and listen on port 8080.
--->
 
 ### Environment variables
 
@@ -125,14 +119,14 @@ The [Source2Image cli tools](https://github.com/openshift/source-to-image/releas
 This example will produce a new docker image named `webapp`:
 
 ```
-s2i build https://github.com/bucharest-gold/s2i-nodejs nearform/rhel7-s2i-nodejs:current webapp
+s2i build https://github.com/bucharest-gold/s2i-nodejs nearform/centos7-s2i-nodejs:current webapp
 ```
 
 ## Installation
 
 There are several ways to make this base image and the full list of tagged Node.js releases available to users during OpenShift's web-based "Add to Project" workflow.
 
-### For OpenShift Online Next Gen Developer Preview
+### For OpenShift Online
 Those without admin privileges can install the latest Node.js releases within their project context with:
 
 ```
@@ -142,7 +136,7 @@ oc create -f https://s3.amazonaws.com/nodejs-distro-imagestreams/nearform_nodejs
 To ensure that each of the latest Node.js release tags are available and displayed correctly in the web UI, try upgrading / reinstalling the image stream:
 
 ```
-oc delete is/rhel7-s2i-nodejs ; oc create -f https://s3.amazonaws.com/nodejs-distro-imagestreams/nearform_nodejs_8_imagestream.json
+oc delete is/centos7-s2i-nodejs ; oc create -f https://s3.amazonaws.com/nodejs-distro-imagestreams/nearform_nodejs_8_imagestream.json
 ```
 
 If you've (automatically) imported this image using the [`oc new-app` example command](#usage), then you may need to clear the auto-imported image stream reference and re-install it.
@@ -158,7 +152,7 @@ oc create -n openshift -f https://s3.amazonaws.com/nodejs-distro-imagestreams/ne
 To replace [the default SCL-packaged `openshift/nodejs` image](https://hub.docker.com/r/openshift/nodejs-010-centos7/) (admin access required), run:
 
 ```
-oc delete is/nodejs -n openshift ; oc create -n openshift -f https://raw.githubusercontent.com/nearform/rhel7-s2i-nodejs/master/centos7-s2i-nodejs.json
+oc delete is/nodejs -n openshift ; oc create -n openshift -f https://raw.githubusercontent.com/nearform/centos7-s2i-nodejs/master/centos7-s2i-nodejs.json
 ```
 
 ## Building your own Builder images
@@ -166,8 +160,8 @@ oc delete is/nodejs -n openshift ; oc create -n openshift -f https://raw.githubu
 Clone a copy of this repo to fetch the build sources:
 
 ```
-git clone https://github.com/nearform/rhel7-s2i-nodejs.git
-cd rhel7-s2i-nodejs
+git clone https://github.com/nearform/centos7-s2i-nodejs.git
+cd centos7-s2i-nodejs
 ```
 
 ### Requirements - docker-squash
