@@ -5,8 +5,6 @@ set -ex
 NODE_VERSION="${1}"
 SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
-NODE_REPO=${${3}:-https://github.com/nodejs/node.git}
-COMMIT=${4}
 
 mkdir -p "${SRCDIR}" || exit 1
 
@@ -51,14 +49,12 @@ else
         git fetch --all
     else
         rm -Rf ${NODEDIR}
-        git clone ${NODE_REPO} ${NODEDIR}
+        git clone https://github.com/nodejs/node.git ${NODEDIR}
         cd ${NODEDIR}
     fi
-    if [[ x"${COMMIT}" == "x" ]]; then
-        git verify-tag v${NODE_VERSION} || exit 1
-        git checkout tags/v${NODE_VERSION}
-    else
-        git checkout ${COMMIT} || exit 1
-    fi
+    git verify-tag v${NODE_VERSION} || exit 1
+    git checkout tags/v${NODE_VERSION}
     cd "${SRCDIR}"
+    # curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz
+    # grep " node-v${NODE_VERSION}.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 fi
