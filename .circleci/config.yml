@@ -18,9 +18,6 @@ jobs:
           command: |
             make envinfo
       - run:
-          name: Configure
-          command: |
-      - run:
           name: Build
           command: |
             source ./contrib/etc/util.sh
