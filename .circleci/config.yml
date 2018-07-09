@@ -11,7 +11,7 @@ jobs:
           name: Prepare
           command: |
             echo "Temporary fix for docker_circleci:0.0.11"
-            sudo apt-get upgrade
+            sudo apt-get update && sudo apt-get upgrade
             sudo apt-get install -qqy make-guile
       - run:
           name: Info
