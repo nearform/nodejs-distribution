@@ -46,5 +46,7 @@ RUN /opt/app-root/etc/install_node_source.sh
 
 USER 1001
 
+HEALTHCHECK NONE
+
 # Set the default CMD to print the usage
 CMD ${STI_SCRIPTS_PATH}/usage
