@@ -13,9 +13,13 @@ We build and images based on various Operating Systems:
 
   [![docker hub stats](http://dockeri.co/image/nearform/centos7-s2i-nodejs)](https://hub.docker.com/r/nearform/centos7-s2i-nodejs/)
 
+  [![Anchore Image Policy](https://anchore.io/service/badges/policy/f1218ba21d522a569a4e06ca2993c68c008a16f5fb7983ffbc606e971be9e7d2?registry=dockerhub&repository=nearform/centos7-s2i-nodejs&tag=latest)](https://anchore.io)
+
 * Alpine 3
 
   [![docker hub stats](http://dockeri.co/image/nearform/alpine3-s2i-nodejs)](https://hub.docker.com/r/nearform/alpine3-s2i-nodejs/)
+
+  [![Anchore Image Policy](https://anchore.io/service/badges/policy/f3906d19235433ed5d19b934618fe8f9db60160034b208efac2d761124c7c05a?registry=dockerhub&repository=nearform/alpine3-s2i-nodejs&tag=latest)](https://anchore.io)
 
 The image can be used like any other image specifying it in your Dockerfile like this:
 ```
