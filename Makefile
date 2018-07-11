@@ -1,5 +1,7 @@
-FROM=$(shell cat $(DOCKERFILE) | grep "FROM " | cut -d' ' -f2)
-DOCKERFILE_PATH=$(PWD)/image/$(OS)
+ROOT_DIR := $(strip $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+print-%: ; @echo $*=$($*)
+
+$(guile (load "$(ROOT_DIR)/contrib/etc/util.scm"))
 
 SLASH := /
 DASH := -
@@ -7,11 +9,29 @@ DOT := .
 COLON := :
 
 PREBUILT := N
+SPECS_DIR := $(ROOT_DIR)/specs
+EXTRA_SPECS_DIR := $(SPECS_DIR)/extra
+
+CORE_SPECS := $(sort $(notdir $(wildcard $(SPECS_DIR)/*)))
+EXTRA_SPECS := $(sort $(notdir $(wildcard $(EXTRA_SPECS_DIR)/*)))
+SPECS := $(CORE_SPECS) $(EXTRA_SPECS)
+
+
 
 # These values are changed in each version branch
 # This is the only place they need to be changed
 # other than the README.md file.
-include versions.mk
+include $(ROOT_DIR)/versions.mk
+
+ifdef SPEC
+include $(SPEC)
+endif
+
+
+OS := $(OS_DIR)
+DOCKERFILE_PATH=$(ROOT_DIR)/image/$(OS)
+FROM=$(shell cat $(DOCKERFILE_PATH)/Dockerfile | grep "FROM " | cut -d' ' -f2)
+
 
 IMG_STRING=$(shell echo $(IMAGE_NAME) | cut -d'/' -f2 | sed -e 's/$(OS)/nearform/g;')
 # RH_TARGET=registry.rhc4tp.openshift.com:443/$(RH_PID)/$(IMG_STRING):$(IMAGE_TAG)
@@ -20,15 +40,38 @@ TARGET=$(IMAGE_NAME):$(IMAGE_TAG)
 ARCHIVE_NAME=$(IMAGE_NAME)-$(IMAGE_TAG)
 ARCHIVE=sources-$(subst $(SLASH),$(DASH),$(ARCHIVE_NAME)).tgz
 
+spec-help-%:
+	$(MAKE) -f $(ROOT_DIR)/specs/$* -f $(ROOT_DIR)/Makefile spec-help
+
+spec-help:
+	@echo DISTRIBUTION_NAME=$(DISTRIBUTION_NAME)
+	@echo OS=$(OS_DIR)
+	@echo NODE_VERSION=$(NODE_VERSION)
+	@echo NPM_VERSION=$(NPM_VERSION)
+	@echo V8_VERSION=$(V8_VERSION)
+	@echo COMMENT=$(SPEC_COMMENT)
+	@echo PREBUILT=$(PREBUILT)
+	@echo REPO=$(REPO)
+	@echo COMMIT_HASH=$(COMMIT_HASH)
+	@echo IMAGE_TAG=$(IMAGE_TAG)
+	@echo IMAGE_NAME=$(IMAGE_NAME)
 envinfo:
 	@echo $(call .FEATURES)
+	@echo
 	@env
+	@echo $(guile (version))
+
+list-specs:
+
+.PHONY: get-source
+get-source:
+	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/ "$(REPO)" "$(COMMIT)"
+
 .PHONY: all
 all: build squash test
 
 .PHONY: build
 build:
-	PREBUILT=$(PREBUILT) OS=$(OS) ./contrib/etc/get_node_source.sh "${NODE_VERSION}" $(PWD)/src/
 ifdef FROM_DATA
 	docker build -f $(DOCKERFILE_PATH)/Dockerfile \
 	--build-arg NODE_VERSION=$(NODE_VERSION) \

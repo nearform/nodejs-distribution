@@ -1,0 +1,15 @@
+# This is example distribution spec file
+
+DISTRIBUTION_NAME := example - Name of the distribution
+OS_DIR := null - subdirectory in $(SRC)/image/$(OS_DIR) which contains Dockerfile and supplementary files
+NODE_VERSION := 9.5.0 - Vesion of node.js
+NPM_VERSION :=  NPM version
+V8_VERSION :=  V8 version
+SPEC_COMMENT := Example spec file
+PREBUILT := N - Whether to use prebuilt binaries
+REPO := https://github.com/nodejs/node.git - git repository to download Node from
+COMMIT_HASH :=  Hash of the commit we want to build - empty means use version tag
+IMAGE_TAG := what to tag the image with
+IMAGE_NAME := nearform/example-s2i-nodejs - What to name the image
+LTS_TAG := N - Is this LTS release?
+FROM_DATA := example - nf.from label

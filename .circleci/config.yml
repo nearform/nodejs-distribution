@@ -8,32 +8,25 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Prepare
+          command: |
+            echo "Temporary fix for docker_circleci:0.0.11"
+            sudo apt-get update && sudo apt-get upgrade
+            sudo apt-get install -qqy make-guile
+      - run:
           name: Info
           command: |
             make envinfo
       - run:
-          name: Configure
+          name: Build
           command: |
-            if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+            source ./contrib/etc/util.sh
+            if [[ -z SPEC || -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                export VERSION=10.0.0
-                export OS=centos7
-                export V8=6.6.346.24
-                export NPM=5.6.0
-                export TAG=test-only
-                export DEBUG_BUILD=T
-                source contrib/etc/util.sh
-
-                ./configure --version "$VERSION" \
-                        --os "$OS" \
-                        --v8 "$V8" \
-                        --npm "$NPM" \
-                        --tag "$TAG" \
-                        --debug \
-                        --fromdata "$(getBaseImageForOs)" \
-                        --prebuilt
+                export SPEC=buildscript-debug
+                export FROM_DATA="$(getBaseImageForOs)"
             else
-                source contrib/etc/util.sh
+              if [[ -z SPEC ]]; then
                 if osSupported ${OS}; then
                     ./configure --version "$VERSION" \
                             --os "$OS" \
@@ -49,10 +42,14 @@ jobs:
                     echo "Unsupported os: $OS"
                     exit 1
                 fi
+              else
+                 export SPEC
+                 echo -n "Building: "
+                 make print-SPEC_COMMENT
+              fi
             fi
-      - run:
-          name: Build
-          command: make build
+            make spec-help
+            make build
       - run:
           name: Docker squash
           command: make squash
