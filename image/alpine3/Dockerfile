@@ -110,6 +110,8 @@ RUN apk del --purge clang \
 
 USER 1001
 
+HEALTHCHECK NONE
+
 RUN ls $STI_SCRIPTS_PATH
 
 # Set the default CMD to print the usage
