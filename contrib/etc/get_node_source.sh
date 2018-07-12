@@ -2,6 +2,8 @@
 
 set -ex
 
+echo PREBUILT: ${PREBUILT}
+
 NODE_VERSION="${1}"
 SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
@@ -30,7 +32,7 @@ done
 # Get the node binary and it's shasum
 cd "${SRCDIR}"
 if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
-
+    echo Getting prebuilt version for Alpne3 and Prebuilt
     if command -v sha256sum; then
         SHACMD=sha256sum
     elif command -v shasum; then
@@ -55,6 +57,4 @@ else
     git verify-tag v${NODE_VERSION} || exit 1
     git checkout tags/v${NODE_VERSION}
     cd "${SRCDIR}"
-    # curl -O -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz
-    # grep " node-v${NODE_VERSION}.tar.gz" SHASUMS256.txt.asc | ${SHACMD} -c -
 fi

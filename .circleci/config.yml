@@ -12,6 +12,11 @@ jobs:
           command: |
             make envinfo
       - run:
+          name: Install mage
+          command: |
+            wget https://github.com/magefile/mage/releases/download/2.1/mage_2.1_Linux-64bit.tar.gz
+            tar -zxvf mage_2.1_Linux-64bit.tar.gz
+      - run:
           name: Configure
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
