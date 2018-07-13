@@ -5,11 +5,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/term"
 	"github.com/jhoonb/archivex"
 )
 
@@ -56,11 +57,8 @@ func Build() error {
 		fmt.Printf("%s", err.Error())
 	}
 	defer buildResponse.Body.Close()
-	fmt.Printf("********* %s **********", buildResponse.OSType)
-	response, err := ioutil.ReadAll(buildResponse.Body)
-	if err != nil {
-		fmt.Printf("%s", err.Error())
-	}
-	fmt.Println(string(response))
-	return err
+	fmt.Printf("********* %s **********\n", buildResponse.OSType)
+
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	return jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 }

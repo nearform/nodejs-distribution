@@ -18,13 +18,13 @@ type Specification struct {
 	V8version   string `required:"true"`
 	Dockerfile  string `required:"true"`
 	Imagetag    string `required:"true"`
-	Latest      bool   `default:"false"`
+	Latest      bool   `default:false`
 	Majortag    string `required:"true"`
 	Minortag    string `required:"true"`
 	Imagename   string `required:"true"`
 	Npmversion  string `required:"true"`
 	Fromdata    string `required:"true"`
-	Prebuilt    string `default:"false"`
+	Prebuilt    string `default:false`
 	Dockeruser  string `required:"true"`
 	Dockerpass  string `required:"true"`
 }
@@ -67,21 +67,29 @@ func InstallSources(s Specification) error {
 		log.Fatal(err)
 	}
 	path := dir + "/src/node-v" + s.Nodeversion + "-linux-x64.tar.gz"
-	log.Println("checking if " + path + " exists")
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-
-		var envs = map[string]string{
-			"PREBUILT": s.Prebuilt,
-			"OS":       s.Os,
+	if s.Prebuilt != "" {
+		log.Println("checking if " + path + " exists")
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			runDownloadScript(s)
+		} else {
+			log.Println("already exists, no need to download again.")
 		}
-		fmt.Println("Installing Node.js sources...")
-		_, err = sh.Exec(envs, os.Stdout, os.Stdout, "./contrib/etc/get_node_source.sh", s.Nodeversion, dir+"/src/")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return err
 	} else {
-		log.Println("already exists, no need to download again.")
+		runDownloadScript(s)
+	}
+	return err
+}
+
+func runDownloadScript(s Specification) error {
+	dir, err := os.Getwd()
+	var envs = map[string]string{
+		"PREBUILT": s.Prebuilt,
+		"OS":       s.Os,
+	}
+	fmt.Println("Installing Node.js sources...")
+	_, err = sh.Exec(envs, os.Stdout, os.Stdout, "./contrib/etc/get_node_source.sh", s.Nodeversion, dir+"/src/")
+	if err != nil {
+		log.Fatal(err)
 	}
 	return err
 }
