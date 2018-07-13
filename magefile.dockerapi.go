@@ -34,11 +34,9 @@ func Build() error {
 	tar.AddAll("help", true)
 	tar.AddAll("image", true)
 	tar.AddAll("licenses", true)
-	tar.AddAll("licenses", true)
 	tar.Close()
 	dockerBuildContext, err := os.Open("/tmp/nodejs-distro.tar")
 	defer dockerBuildContext.Close()
-	// defaultHeaders := map[string]string{"Content-Type": "application/tar"}
 	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
 	args := map[string]*string{
 		"PREBUILT":     &s.Prebuilt,
@@ -58,7 +56,6 @@ func Build() error {
 		fmt.Printf("%s", err.Error())
 	}
 	defer buildResponse.Body.Close()
-	//time.Sleep(5000 * time.Millisecond)
 	fmt.Printf("********* %s **********", buildResponse.OSType)
 	response, err := ioutil.ReadAll(buildResponse.Body)
 	if err != nil {
