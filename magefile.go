@@ -66,14 +66,22 @@ func InstallSources(s Specification) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var envs = map[string]string{
-		"PREBUILT": s.Prebuilt,
-		"OS":       s.Os,
-	}
-	fmt.Println("Installing Node.js sources...")
-	_, err = sh.Exec(envs, os.Stdout, os.Stdout, "./contrib/etc/get_node_source.sh", s.Nodeversion, dir+"/src/")
-	if err != nil {
-		log.Fatal(err)
+	path := dir + "/src/node-v" + s.Nodeversion + "-linux-x64.tar.gz"
+	log.Println("checking if " + path + " exists")
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+
+		var envs = map[string]string{
+			"PREBUILT": s.Prebuilt,
+			"OS":       s.Os,
+		}
+		fmt.Println("Installing Node.js sources...")
+		_, err = sh.Exec(envs, os.Stdout, os.Stdout, "./contrib/etc/get_node_source.sh", s.Nodeversion, dir+"/src/")
+		if err != nil {
+			log.Fatal(err)
+		}
+		return err
+	} else {
+		log.Println("already exists, no need to download again.")
 	}
 	return err
 }
