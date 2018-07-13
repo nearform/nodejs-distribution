@@ -3,19 +3,14 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/magefile/mage/sh"
 	// mg contains helpful utility functions, like Deps
 )
-
-const defaultDockerAPIVersion = "v1.37"
 
 type Specification struct {
 	Os          string `required:"true"`
@@ -30,68 +25,13 @@ type Specification struct {
 	Npmversion  string `required:"true"`
 	Fromdata    string `required:"true"`
 	Prebuilt    string `default:"false"`
+	Dockeruser  string `required:"true"`
+	Dockerpass  string `required:"true"`
 }
 
 // Default target to run when none is specified
 // If not set, running mage will list available targets
 // var Default = Build
-
-// A build step that requires additional params, or platform specific steps for example
-func Build() error {
-	s := ParseEnvVars()
-	// InstallSources(s)
-	fmt.Println("Building Docker Image...")
-	// dir, err := os.Getwd()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
-	if err != nil {
-		panic(err)
-	}
-
-	// dockerBuildContext, err := os.Open(".")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	os.Setenv("PREBUILT", s.Prebuilt)
-
-	opt := types.ImageBuildOptions{
-		BuildArgs: map[string]*string{
-			"NODE_VERSION": &s.Nodeversion,
-			"NPM_VERSION":  &s.Npmversion,
-			"V8_VERSION":   &s.V8version,
-			"PREBUILT":     &s.Prebuilt,
-			"FROM_DATA":    &s.Fromdata,
-		},
-		Tags: []string{s.Imagename + ":" + s.Imagetag},
-		// Context:    dockerBuildContext,
-		// Dockerfile: "image/" + s.Os + "/Dockerfile",
-	}
-
-	_, err = cli.ImageBuild(ctx, nil, opt)
-	if err != nil {
-		panic(err)
-	}
-
-	// app := "docker"
-	// args := []string{
-	// 	"build", "-f", dir + "/image/" + s.Os + "/Dockerfile",
-	// 	"--build-arg", "NODE_VERSION=" + s.Nodeversion,
-	// 	"--build-arg", "NPM_VERSION=" + s.Npmversion,
-	// 	"--build-arg", "V8_VERSION=" + s.V8version,
-	// 	"--build-arg", "PREBUILT=" + s.Prebuilt,
-	// 	"--build-arg", "FROM_DATA=" + s.Fromdata,
-	// 	"-t", s.Imagename + ":" + s.Imagetag, "."}
-	// _, err = sh.Exec(envs, os.Stdout, os.Stdout, app, args...)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	return err
-}
 
 func ParseEnvVars() Specification {
 	var s Specification
@@ -99,11 +39,11 @@ func ParseEnvVars() Specification {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	format := "Debug:\nNodeversion: %s\nOs: %d\nDockerfile: %f\nImagetag: %s\nLatest: %v\nMajor Tag: %s\nMinor Tag: %s\nImage name: %s\nNPM Version: %s\nFrom: %s\nPrebuilt: %v\n"
+	format := "Debug:\nNodeversion: %s\nOs: %d\nV8: %s\nDockerfile: %f\nImagetag: %s\nLatest: %v\nMajor Tag: %s\nMinor Tag: %s\nImage name: %s\nNPM Version: %s\nFrom: %s\nPrebuilt: %v\n"
 	_, err = fmt.Printf(
 		format,
-		s.Os,
 		s.Nodeversion,
+		s.Os,
 		s.V8version,
 		s.Dockerfile,
 		s.Imagetag,
@@ -138,10 +78,43 @@ func InstallSources(s Specification) error {
 	return err
 }
 
+// publish to docker hub
+func Publish() {
+	s := ParseEnvVars()
+	var envs = map[string]string{}
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "login", "--username", "ops@nearform.com", "-p", s.Dockerpass)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// 	@echo $(DOCKER_PASS) | docker login --username $(DOCKER_USER) --password-stdin
+	// 	docker push $(TARGET)
+
+	// ifdef LATEST
+	// 	docker tag $(TARGET) $(IMAGE_NAME):latest
+	// 	docker push $(IMAGE_NAME):latest
+
+	// ifdef MAJOR_TAG
+	// 	docker tag $(TARGET) $(IMAGE_NAME):$(MAJOR_TAG)
+	// 	docker push $(IMAGE_NAME):$(MAJOR_TAG)
+
+	// 	ifdef MINOR_TAG
+	// 	docker tag $(TARGET) $(IMAGE_NAME):$(MINOR_TAG)
+	// 	docker push $(IMAGE_NAME):$(MINOR_TAG)
+
+	// 	ifdef LTS_TAG
+	// 	docker tag $(TARGET) $(IMAGE_NAME):$(LTS_TAG)
+	// 	docker push $(IMAGE_NAME):$(LTS_TAG)
+}
+
 // Clean up after yourself
 func Clean() {
 	fmt.Println("Cleaning /src dir...")
 	sh.Rm("src/.")
-	// fmt.Println("Cleanup image")
-	// docker rmi `docker images $(TARGET) -q`
+	s := ParseEnvVars()
+	fmt.Println("Cleanup image " + s.Imagename + ":" + s.Imagetag)
+	var envs = map[string]string{}
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "rmi", s.Imagename+":"+s.Imagetag)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

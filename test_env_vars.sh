@@ -12,3 +12,5 @@ export ND_IMAGENAME=nearform/alpine3-s2i-nodejs
 export ND_NPMVERSION=5.6.0
 export ND_FROMDATA="{ \"from\": { \"image\": \"centos/s2i-base-centos7\", \"tag\": \"latest\", \"last_updated\": \"2018-06-05T16:17:48.190766Z\", \"sha\":\"\" } }"
 export ND_PREBUILT=T
+export ND_DOCKERUSER=ops@nearform.com
+export ND_DOCKERPASS=XYq2*AUQJ^Pj8vw
