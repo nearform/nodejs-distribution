@@ -4,6 +4,8 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -48,7 +50,7 @@ func Build() error {
 		Remove:         true,
 		ForceRemove:    true,
 		PullParent:     true,
-		Tags:           []string{s.Imagename + ":" + s.Imagetag},
+		Tags:           getTags(s),
 		Dockerfile:     "image/" + s.Os + "/Dockerfile",
 		BuildArgs:      args,
 	}
@@ -61,4 +63,67 @@ func Build() error {
 
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	return jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
+}
+
+func getTags(s Specification) []string {
+	tags := []string{s.Imagename + ":" + s.Imagetag}
+	if s.Latest {
+		tags = append(tags, s.Imagename+":latest")
+	}
+	if s.Majortag != "" {
+		tags = append(tags, s.Imagename+":"+s.Majortag)
+	}
+	if s.Minortag != "" {
+		tags = append(tags, s.Imagename+":"+s.Minortag)
+	}
+	if s.Lts != "" {
+		tags = append(tags, s.Imagename+":"+s.Lts)
+	}
+	return tags
+}
+
+// publish to docker hub
+func Publish() error {
+	s := ParseEnvVars()
+	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+
+	authConfig := types.AuthConfig{
+		Username: s.Dockeruser,
+		Password: s.Dockerpass,
+	}
+	encodedJSON, err := json.Marshal(authConfig)
+	if err != nil {
+		panic(err)
+	}
+	authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+
+	options := types.ImagePushOptions{
+		RegistryAuth: authStr,
+		All:          true,
+	}
+	pushResponse, err := cli.ImagePush(context.Background(), s.Imagename+":"+s.Imagetag, options)
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+	}
+	defer pushResponse.Close()
+
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	return jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFd, isTerm, nil)
+}
+
+// Clean up sources and the images we created
+func Clean() error {
+	s := ParseEnvVars()
+	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+	options := types.ImageRemoveOptions{}
+	tags := getTags(s)
+	var err error
+	for i := 0; i < len(tags); i++ {
+		removeResponse, err := cli.ImageRemove(context.Background(), tags[i], options)
+		if err != nil {
+			fmt.Printf("%s", err.Error())
+		}
+		fmt.Println(removeResponse)
+	}
+	return err
 }

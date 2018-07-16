@@ -19,6 +19,7 @@ type Specification struct {
 	Dockerfile  string `required:"true"`
 	Imagetag    string `required:"true"`
 	Latest      bool   `default:false`
+	Lts         string
 	Majortag    string `required:"true"`
 	Minortag    string `required:"true"`
 	Imagename   string `required:"true"`
@@ -39,7 +40,7 @@ func ParseEnvVars() Specification {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	format := "Debug:\nNodeversion: %s\nOs: %d\nV8: %s\nDockerfile: %f\nImagetag: %s\nLatest: %v\nMajor Tag: %s\nMinor Tag: %s\nImage name: %s\nNPM Version: %s\nFrom: %s\nPrebuilt: %v\n"
+	format := "Debug:\nNodeversion: %s\nOs: %d\nV8: %s\nDockerfile: %f\nImagetag: %s\nLatest: %v\nLts: %v\nMajor Tag: %s\nMinor Tag: %s\nImage name: %s\nNPM Version: %s\nFrom: %s\nPrebuilt: %v\n"
 	_, err = fmt.Printf(
 		format,
 		s.Nodeversion,
@@ -48,6 +49,7 @@ func ParseEnvVars() Specification {
 		s.Dockerfile,
 		s.Imagetag,
 		s.Latest,
+		s.Lts,
 		s.Majortag,
 		s.Minortag,
 		s.Imagename,
@@ -92,45 +94,4 @@ func runDownloadScript(s Specification) error {
 		log.Fatal(err)
 	}
 	return err
-}
-
-// publish to docker hub
-func Publish() {
-	s := ParseEnvVars()
-	var envs = map[string]string{}
-	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "login", "--username", "ops@nearform.com", "-p", s.Dockerpass)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// 	@echo $(DOCKER_PASS) | docker login --username $(DOCKER_USER) --password-stdin
-	// 	docker push $(TARGET)
-
-	// ifdef LATEST
-	// 	docker tag $(TARGET) $(IMAGE_NAME):latest
-	// 	docker push $(IMAGE_NAME):latest
-
-	// ifdef MAJOR_TAG
-	// 	docker tag $(TARGET) $(IMAGE_NAME):$(MAJOR_TAG)
-	// 	docker push $(IMAGE_NAME):$(MAJOR_TAG)
-
-	// 	ifdef MINOR_TAG
-	// 	docker tag $(TARGET) $(IMAGE_NAME):$(MINOR_TAG)
-	// 	docker push $(IMAGE_NAME):$(MINOR_TAG)
-
-	// 	ifdef LTS_TAG
-	// 	docker tag $(TARGET) $(IMAGE_NAME):$(LTS_TAG)
-	// 	docker push $(IMAGE_NAME):$(LTS_TAG)
-}
-
-// Clean up after yourself
-func Clean() {
-	fmt.Println("Cleaning /src dir...")
-	sh.Rm("src/.")
-	s := ParseEnvVars()
-	fmt.Println("Cleanup image " + s.Imagename + ":" + s.Imagetag)
-	var envs = map[string]string{}
-	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "rmi", s.Imagename+":"+s.Imagetag)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
