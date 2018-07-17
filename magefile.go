@@ -114,8 +114,11 @@ func Test() {
 	sh.Rm("src/.")
 	s := ParseEnvVars()
 	fmt.Println("Cleanup image " + s.Imagename + ":" + s.Imagetag)
-	var envs = map[string]string{}
-	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "rmi", s.Imagename+":"+s.Imagetag)
+	var envs = map[string]string{
+		"BUILDER":      s.Imagename + ":" + s.Imagetag,
+		"NODE_VERSION": s.Nodeversion,
+	}
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "test/run.sh")
 	if err != nil {
 		log.Fatal(err)
 	}
