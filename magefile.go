@@ -95,3 +95,28 @@ func runDownloadScript(s Specification) error {
 	}
 	return err
 }
+
+// Squash the image using a shell command
+func Squash() {
+	fmt.Println("Squashing the image...")
+	s := ParseEnvVars()
+	tags := getTags(s)
+	var envs = map[string]string{}
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker-squash", tags[0], "-t", tags[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// Run a test on the image
+func Test() {
+	fmt.Println("Squashing the image...")
+	sh.Rm("src/.")
+	s := ParseEnvVars()
+	fmt.Println("Cleanup image " + s.Imagename + ":" + s.Imagetag)
+	var envs = map[string]string{}
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker", "rmi", s.Imagename+":"+s.Imagetag)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
