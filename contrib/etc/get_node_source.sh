@@ -2,11 +2,11 @@
 
 set -ex
 
-echo PREBUILT: ${PREBUILT}
-
 NODE_VERSION="${1}"
 SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
+NODE_REPO=${${3}:-https://github.com/nodejs/node.git}
+COMMIT=${4}
 
 mkdir -p "${SRCDIR}" || exit 1
 
@@ -32,7 +32,7 @@ done
 # Get the node binary and it's shasum
 cd "${SRCDIR}"
 if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
-    echo "Getting prebuilt version for Alpine3 and Prebuilt"
+
     if command -v sha256sum; then
         SHACMD=sha256sum
     elif command -v shasum; then
@@ -51,10 +51,14 @@ else
         git fetch --all
     else
         rm -Rf ${NODEDIR}
-        git clone https://github.com/nodejs/node.git ${NODEDIR}
+        git clone ${NODE_REPO} ${NODEDIR}
         cd ${NODEDIR}
     fi
-    git verify-tag v${NODE_VERSION} || exit 1
-    git checkout tags/v${NODE_VERSION}
+    if [[ x"${COMMIT}" == "x" ]]; then
+        git verify-tag v${NODE_VERSION} || exit 1
+        git checkout tags/v${NODE_VERSION}
+    else
+        git checkout ${COMMIT} || exit 1
+    fi
     cd "${SRCDIR}"
 fi

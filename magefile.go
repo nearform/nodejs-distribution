@@ -39,6 +39,7 @@ type Specification struct {
 }
 
 const bucketName string = "sourcecode-nearform-export-compliance"
+const defaultRepo string = ""
 
 // Default target to run when none is specified
 // If not set, running mage will list available targets
@@ -134,7 +135,14 @@ func runDownloadScript(s Specification) error {
 		"OS":       s.Os,
 	}
 	fmt.Println("Installing Node.js sources...")
-	_, err = sh.Exec(envs, os.Stdout, os.Stdout, "./contrib/etc/get_node_source.sh", s.Nodeversion, dir+"/src/")
+	_, err = sh.Exec(
+		envs,
+		os.Stdout,
+		os.Stdout,
+		"./contrib/etc/get_node_source.sh",
+		s.Nodeversion,
+		dir+"/src/",
+	)
 	check(err)
 	return err
 }
