@@ -5,7 +5,10 @@ set -ex
 NODE_VERSION="${1}"
 SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
-NODE_REPO=${${3}:-https://github.com/nodejs/node.git}
+NODE_REPO=${3}
+if [ -z $NODE_REPO ]; then
+    NODE_REPO="https://github.com/nodejs/node.git"
+fi
 COMMIT=${4}
 
 mkdir -p "${SRCDIR}" || exit 1
