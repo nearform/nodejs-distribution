@@ -32,7 +32,7 @@ done
 # Get the node binary and it's shasum
 cd "${SRCDIR}"
 if [[ x"${PREBUILT}" == "xT" ]] && [ "${OS}" != "alpine3" ]; then
-    echo Getting prebuilt version for Alpne3 and Prebuilt
+    echo "Getting prebuilt version for Alpine3 and Prebuilt"
     if command -v sha256sum; then
         SHACMD=sha256sum
     elif command -v shasum; then
