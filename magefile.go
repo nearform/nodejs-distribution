@@ -96,7 +96,7 @@ func preBuiltEnv(v *viper.Viper) string {
 }
 
 func archiveName(v *viper.Viper) string {
-	dashedImageName := strings.Replace(v.GetString("Imagename"), "/", "-", -1)
+	dashedImageName := strings.Replace(imageName(config()), "/", "-", -1)
 	return "sources-" + dashedImageName + ".tgz"
 }
 
