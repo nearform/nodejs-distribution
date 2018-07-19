@@ -6,7 +6,8 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+            docker_layer_caching: true
 
       - run:
           name: Install mage
@@ -15,7 +16,6 @@ jobs:
             wget https://s3.amazonaws.com/node-distro/makeDistro
             sudo mv makeDistro /usr/local/bin/mage
             sudo chmod +x /usr/local/bin/mage
-            mage
       - run:
           name: Configure
           command: |
@@ -40,7 +40,6 @@ jobs:
           name: Info
           command: |
             mage showConfig
-            printenv
       - run:
           name: Build
           command: mage build
