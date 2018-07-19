@@ -29,7 +29,11 @@ jobs:
                 export DEBUG_BUILD=T
             else
                 if osSupported ${OS}; then
-                    echo "..."
+                    export VERSION=$VERSION
+                    export OS=$OS
+                    export V8=$V8
+                    export NPM=$NPM
+                    export TAG=$TAG
                 else
                     echo "Unsupported os: $OS"
                     exit 1
