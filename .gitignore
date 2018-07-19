@@ -5,3 +5,4 @@ src
 test_env_vars.sh
 sources-nearform*.*
 checksum
+makeDistro
