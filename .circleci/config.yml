@@ -16,6 +16,7 @@ jobs:
           command: |
             wget https://github.com/magefile/mage/releases/download/2.1/mage_2.1_Linux-64bit.tar.gz
             tar -zxvf mage_2.1_Linux-64bit.tar.gz
+            sudo mv mage /usr/local/bin/
       - run:
           name: Configure
           command: |
