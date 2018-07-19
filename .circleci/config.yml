@@ -11,8 +11,7 @@ jobs:
       - run:
           name: Install mage
           command: |
-            ls -Alh
-            rm makeDistro
+
             wget https://s3.amazonaws.com/node-distro/makeDistro
             sudo mv makeDistro /usr/local/bin/mage
             sudo chmod +x /usr/local/bin/mage
