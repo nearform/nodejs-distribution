@@ -7,16 +7,18 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: Info
-          command: |
-            make envinfo
+
       - run:
           name: Install mage
           command: |
             wget https://github.com/magefile/mage/releases/download/2.1/mage_2.1_Linux-64bit.tar.gz
             tar -zxvf mage_2.1_Linux-64bit.tar.gz
             sudo mv mage /usr/local/bin/
+            mage
+      - run:
+          name: Info
+          command: |
+            mage showInfo
       - run:
           name: Configure
           command: |
@@ -58,20 +60,20 @@ jobs:
             fi
       - run:
           name: Build
-          command: make build
+          command: mage build
       - run:
           name: Docker squash
-          command: make squash
+          command: mage squash
       - run:
           name: Test
-          command: make test
+          command: mage test
       - run:
           name: Publish to Docker Hub
           command: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                make publish
+                mage publish
             fi
       - run:
           name: Publish to Red Hat
@@ -81,7 +83,7 @@ jobs:
                 if ! isDebug && shouldPublish; then
                     echo $(getProjectSecret) | docker login -u unused scan.connect.redhat.com --password-stdin
                     export RH_PID=$(getProjectId)
-                    make redhat_publish
+                    mage publishRedHat
                 fi
             else
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
@@ -90,7 +92,7 @@ jobs:
           name: Archive
           command: |
             if [ "$OS" == "rhel7" ]; then
-                make archive
+                mage archive
             else
                 echo "OS is not [rhel7] not archiving"
             fi
@@ -100,7 +102,7 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
-                make upload
+                mage upload
             else
                 echo "OS is not [rhel7] not uploading"
             fi
