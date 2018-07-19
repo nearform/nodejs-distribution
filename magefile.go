@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/magefile/mage/sh"
@@ -47,10 +48,16 @@ func config() *viper.Viper {
 		v.BindEnv("Imagetag", "TAG")
 		v.BindEnv("Majortag", "MAJOR")
 		v.BindEnv("Minortag", "MINOR")
-		v.BindEnv("Latest", "LATEST")
+		v.BindEnv("LatestString", "LATEST")
+		latest, err := strconv.ParseBool(v.GetString("LatestString"))
+		check(err)
+		v.Set("Latest", latest)
 		v.BindEnv("Lts", "LTS")
 		v.BindEnv("Fromdata", "FROM_DATA")
-		v.BindEnv("Prebuilt", "PREBUILT")
+		v.BindEnv("PrebuiltString", "PREBUILT")
+		prebuilt, err := strconv.ParseBool(v.GetString("PrebuiltString"))
+		check(err)
+		v.Set("Prebuilt", prebuilt)
 	}
 	v.BindEnv("Dockeruser", "DOCKER_USER")
 	v.BindEnv("Dockerpass", "DOCKER_PASS")
@@ -58,7 +65,7 @@ func config() *viper.Viper {
 	v.BindEnv("Rhendpoint", "RH_ENDPOINT")
 	v.BindEnv("Rhproject", "RH_PROJECT")
 
-	v.SetDefault("Dockerfile", "image/"+v.GetString("Os")+"/Dockerfile")
+	v.Set("Dockerfile", "image/"+v.GetString("Os")+"/Dockerfile")
 	return v
 }
 
@@ -71,10 +78,10 @@ func ShowConfig() {
 	fmt.Println("IMAGE_TAG: " + v.GetString("Imagetag"))
 	fmt.Println("MAJOR_TAG: " + v.GetString("Majortag"))
 	fmt.Println("MINOR_TAG: " + v.GetString("Minortag"))
-	fmt.Println("LATEST: " + v.GetString("Latest"))
+	fmt.Println("LATEST: " + strconv.FormatBool(v.GetBool("Latest")))
 	fmt.Println("LTS: " + v.GetString("Lts"))
 	fmt.Println("FROM_DATA: " + v.GetString("Fromdata"))
-	fmt.Println("PREBUILT: " + v.GetString("Prebuilt"))
+	fmt.Println("PREBUILT: " + strconv.FormatBool(v.GetBool("Prebuilt")))
 }
 
 // get base image name
