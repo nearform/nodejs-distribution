@@ -12,8 +12,7 @@ jobs:
           name: Install mage
           command: |
             wget https://s3.amazonaws.com/node-distro/makeDistro
-            tar -zxvf mage_2.1_Linux-64bit.tar.gz
-            sudo mv mage /usr/local/bin/
+            sudo mv makeDistro /usr/local/bin/mage
             mage
       - run:
           name: Info
