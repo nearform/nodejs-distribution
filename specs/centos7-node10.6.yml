@@ -1,7 +1,11 @@
-DISTRIBUTION_NAME: CentOS 7
-OS_DIR: centos7
-NODE_VERSION: 10.6
-NPM_VERSION: 5.6.0
-IMAGE_TAG: 10.6
-IMAGE_NAME: "nearform/centos7-s2i-nodejs"
-SPEC_COMMENT: CentOS 7 with node 10.6
+Os: centos7
+Nodeversion: 10.6.0
+Npmversion: 5.6.0
+Imagetag: 10.6.0
+Majortag: 10
+Minortag: 10.6
+V8version: 6.7.288.49
+Lts:  # empty string is the default, should be like 'Carbon', 'Boron'
+Latest: true # false is the default
+Prebuilt: false # false is the default
+Fromdata: "{ \"from\": { \"image\": \"centos/s2i-base-centos7\", \"tag\": \"latest\", \"last_updated\": \"2018-06-05T16:17:48.190766Z\", \"sha\":\"g98fd7g08sdf7g098s7098f70s9d8\" } }"
