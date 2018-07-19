@@ -18,6 +18,13 @@ import (
 
 const defaultDockerAPIVersion = "v1.37"
 
+func getDockerClient() *client.Client {
+	cli, _ := client.NewClientWithOpts(client.FromEnv, client.WithVersion(defaultDockerAPIVersion))
+	// err := client.FromEnv(cli)
+	// check(err)
+	return cli
+}
+
 // Build the container using the native docker api
 func Build() error {
 	v := config()
@@ -33,7 +40,7 @@ func Build() error {
 	})
 	dockerBuildContext, err := os.Open("/tmp/nodejs-distro.tar")
 	defer dockerBuildContext.Close()
-	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+	cli := getDockerClient()
 	pb := preBuiltEnv(v)
 	nv := v.GetString("Nodeversion")
 	args := map[string]*string{
@@ -79,7 +86,7 @@ func getTags() []string {
 // publish to docker hub
 func Publish() error {
 	v := config()
-	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+	cli := getDockerClient()
 
 	authConfig := types.AuthConfig{
 		Username: v.GetString("Dockeruser"),
@@ -106,7 +113,7 @@ func Publish() error {
 // publish to Red Hat Catalog
 func PublishRedHat() error {
 	v := config()
-	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+	cli := getDockerClient()
 
 	authConfig := types.AuthConfig{
 		Username:      "unused",
@@ -139,7 +146,7 @@ func PublishRedHat() error {
 
 // Clean up sources and the images we created
 func Clean() error {
-	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
+	cli := getDockerClient()
 	options := types.ImageRemoveOptions{}
 	tags := getTags()
 	var err error
