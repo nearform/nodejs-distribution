@@ -13,6 +13,7 @@ jobs:
           command: |
             wget https://s3.amazonaws.com/node-distro/makeDistro
             sudo mv makeDistro /usr/local/bin/mage
+            sudo chmod +x /usr/local/bin/mage
             mage
       - run:
           name: Info
