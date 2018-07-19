@@ -25,6 +25,10 @@ const defaultRepo string = "https://github.com/nodejs/node.git"
 func config() *viper.Viper {
 	configFile := os.Getenv("CONFIG_FILE")
 	v := viper.New()
+	v.SetDefault("Latest", false)
+	v.SetDefault("Lts", "")
+	v.SetDefault("Fromdata", "{}")
+	v.SetDefault("Prebuilt", false)
 	if len(configFile) > 0 {
 		extension := filepath.Ext(configFile)
 		bareName := configFile[0 : len(configFile)-len(extension)]
@@ -33,6 +37,7 @@ func config() *viper.Viper {
 		v.AddConfigPath(".")
 		err := v.ReadInConfig()
 		check(err)
+		fmt.Println(v.ConfigFileUsed())
 	} else {
 		fmt.Println("Reading config from ENV vars")
 		v.BindEnv("Os", "OS")
@@ -78,7 +83,7 @@ func imageName(v *viper.Viper) string {
 }
 
 func dockerFile(v *viper.Viper) string {
-	return "/image/" + v.GetString("Os") + "/Dockerfile"
+	return "image/" + v.GetString("Os") + "/Dockerfile"
 }
 
 func isLatest(v *viper.Viper) string {
