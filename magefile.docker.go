@@ -46,7 +46,7 @@ func Build() error {
 		ForceRemove:    true,
 		PullParent:     true,
 		Tags:           getTags(),
-		Dockerfile:     "image/" + v.GetString("Os") + "/Dockerfile",
+		Dockerfile:     dockerFile(v),
 		BuildArgs:      args,
 	}
 	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
@@ -70,7 +70,7 @@ func getTags() []string {
 	if v.IsSet("Minortag") {
 		tags = append(tags, imageName(v)+":"+v.GetString("Minortag"))
 	}
-	if v.IsSet("Lts") {
+	if v.GetString("Lts") != "" {
 		tags = append(tags, imageName(v)+":"+v.GetString("Lts"))
 	}
 	return tags
