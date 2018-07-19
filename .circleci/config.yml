@@ -20,7 +20,7 @@ jobs:
       - run:
           name: Info
           command: |
-            mage showInfo
+            mage showConfig
       - run:
           name: Configure
           command: |
