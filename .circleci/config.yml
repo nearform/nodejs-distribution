@@ -28,12 +28,9 @@ jobs:
                 export TAG=test-only
                 export DEBUG_BUILD=T
             else
+                source contrib/etc/util.sh
                 if osSupported ${OS}; then
-                    export VERSION=$VERSION
-                    export OS=$OS
-                    export V8=$V8
-                    export NPM=$NPM
-                    export TAG=$TAG
+                    echo ...
                 else
                     echo "Unsupported os: $OS"
                     exit 1
