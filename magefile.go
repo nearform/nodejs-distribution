@@ -7,94 +7,96 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/kelseyhightower/envconfig"
 	"github.com/magefile/mage/sh"
-	// mg contains helpful utility functions, like Deps
+	"github.com/spf13/viper"
 )
 
-type Specification struct {
-	Os                 string `required:"true"`
-	Nodeversion        string `required:"true"`
-	V8version          string `required:"true"`
-	Dockerfile         string `required:"true"`
-	Imagetag           string `required:"true"`
-	Latest             bool   `default:false`
-	Lts                string
-	Majortag           string `required:"true"`
-	Minortag           string `required:"true"`
-	Imagename          string `required:"true"`
-	Npmversion         string `required:"true"`
-	Fromdata           string `required:"true"`
-	Prebuilt           bool   `default:false`
-	Dockeruser         string `required:"true"`
-	Dockerpass         string `required:"true"`
-	Rhsecret           string `required:"true"`
-	Rhendpoint         string `required:"true"`
-	Rhproject          string `required:"true"`
-	AwsAccessKey       string `required:"true" split_words:"true"`
-	AwsSecretAccessKey string `required:"true" split_words:"true"`
-}
-
 const bucketName string = "sourcecode-nearform-export-compliance"
-const defaultRepo string = ""
+const defaultRepo string = "https://github.com/nodejs/node.git"
 
 // Default target to run when none is specified
 // If not set, running mage will list available targets
 // var Default = Build
 
-func ParseEnvVars() Specification {
-	var s Specification
-	err := envconfig.Process("nd", &s)
-	if err != nil {
-		log.Fatal(err.Error())
+func config() *viper.Viper {
+	configFile := os.Getenv("CONFIG_FILE")
+	v := viper.New()
+	if len(configFile) > 0 {
+		extension := filepath.Ext(configFile)
+		bareName := configFile[0 : len(configFile)-len(extension)]
+		fmt.Println("Reading config from file: " + configFile)
+		v.SetConfigName(bareName)
+		v.AddConfigPath(".")
+		err := v.ReadInConfig()
+		check(err)
+	} else {
+		fmt.Println("Reading config from ENV vars")
+		v.BindEnv("Os", "OS")
+		v.BindEnv("Nodeversion", "NODE_VERSION")
+		v.BindEnv("Npmversion", "NPM_VERSION")
+		v.BindEnv("V8version", "V8_VERSION")
+		v.BindEnv("Imagetag", "IMAGE_TAG")
+		v.BindEnv("Majortag", "MAJOR_TAG")
+		v.BindEnv("Minortag", "MINOR_TAG")
+		v.BindEnv("Latest", "LATEST")
+		v.BindEnv("Lts", "LTS")
+		v.BindEnv("Fromdata", "FROM_DATA")
+		v.BindEnv("Prebuilt", "PREBUILT")
 	}
-	format := "Debug:\nNodeversion: %s\nOs: %d\nV8: %s\nDockerfile: %f\nImagetag: %s\nLatest: %v\nLts: %v\nMajor Tag: %s\nMinor Tag: %s\nImage name: %s\nNPM Version: %s\nFrom: %s\nPrebuilt: %v\n"
-	_, err = fmt.Printf(
-		format,
-		s.Nodeversion,
-		s.Os,
-		s.V8version,
-		s.Dockerfile,
-		s.Imagetag,
-		s.Latest,
-		s.Lts,
-		s.Majortag,
-		s.Minortag,
-		s.Imagename,
-		s.Npmversion,
-		s.Fromdata,
-		s.Prebuilt,
-	)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	return s
+	v.BindEnv("Dockeruser", "DOCKER_USER")
+	v.BindEnv("Dockerpass", "DOCKER_PASS")
+	v.BindEnv("Rhsecret", "RH_SECRET")
+	v.BindEnv("Rhendpoint", "RH_ENDPOINT")
+	v.BindEnv("Rhproject", "RH_PROJECT")
+
+	v.SetDefault("Dockerfile", "image/"+v.GetString("Os")+"/Dockerfile")
+	return v
+}
+
+func ShowConfig() {
+	v := config()
+	fmt.Println("OS: " + v.GetString("Os"))
+	fmt.Println("NODE_VERSION: " + v.GetString("Nodeversion"))
+	fmt.Println("NPM_VERSION: " + v.GetString("Npmversion"))
+	fmt.Println("V8_VERSION: " + v.GetString("V8version"))
+	fmt.Println("IMAGE_TAG: " + v.GetString("Imagetag"))
+	fmt.Println("MAJOR_TAG: " + v.GetString("Majortag"))
+	fmt.Println("MINOR_TAG: " + v.GetString("Minortag"))
+	fmt.Println("LATEST: " + v.GetString("Latest"))
+	fmt.Println("LTS: " + v.GetString("Lts"))
+	fmt.Println("FROM_DATA: " + v.GetString("Fromdata"))
+	fmt.Println("PREBUILT: " + v.GetString("Prebuilt"))
 }
 
 // get base image name
-func imageName(s Specification) string {
-	return s.Imagename + ":" + s.Imagetag
+func imageName(v *viper.Viper) string {
+	return "nearform/" + v.GetString("Os") + "-s2i-nodejs"
 }
 
-func isLatest(s Specification) string {
-	if s.Latest {
+func dockerFile(v *viper.Viper) string {
+	return "/image/" + v.GetString("Os") + "/Dockerfile"
+}
+
+func isLatest(v *viper.Viper) string {
+	if v.GetBool("Latest") {
 		return "T"
 	}
 	return ""
 }
 
-func preBuiltEnv(s Specification) string {
-	if s.Prebuilt {
+func preBuiltEnv(v *viper.Viper) string {
+	if v.GetBool("Prebuilt") {
 		return "T"
 	}
 	return " "
 }
 
-func archiveName(s Specification) string {
-	dashedImageName := strings.Replace(s.Imagename, "/", "-", -1)
+func archiveName(v *viper.Viper) string {
+	dashedImageName := strings.Replace(v.GetString("Imagename"), "/", "-", -1)
 	return "sources-" + dashedImageName + ".tgz"
 }
 
@@ -104,35 +106,30 @@ func check(e error) {
 	}
 }
 
-// show configuratio
-func ShowConfig() {
-	fmt.Println(ParseEnvVars())
-}
-
 // Get Node.js sources, build
 func InstallSources() error {
-	s := ParseEnvVars()
+	v := config()
 	dir, err := os.Getwd()
 	check(err)
-	path := dir + "/src/node-v" + s.Nodeversion + "-linux-x64.tar.gz"
-	if s.Prebuilt {
+	path := dir + "/src/node-v" + v.GetString("Nodeversion") + "-linux-x64.tar.gz"
+	if v.GetBool("Prebuilt") {
 		log.Println("checking if " + path + " exists")
 		if _, err := os.Stat(path); os.IsNotExist(err) {
-			runDownloadScript(s)
+			runDownloadScript(v)
 		} else {
 			log.Println("already exists, no need to download again.")
 		}
 	} else {
-		runDownloadScript(s)
+		runDownloadScript(v)
 	}
 	return err
 }
 
-func runDownloadScript(s Specification) error {
+func runDownloadScript(v *viper.Viper) error {
 	dir, err := os.Getwd()
 	var envs = map[string]string{
-		"PREBUILT": preBuiltEnv(s),
-		"OS":       s.Os,
+		"PREBUILT": preBuiltEnv(v),
+		"OS":       v.GetString("Os"),
 	}
 	fmt.Println("Installing Node.js sources...")
 	_, err = sh.Exec(
@@ -140,8 +137,9 @@ func runDownloadScript(s Specification) error {
 		os.Stdout,
 		os.Stdout,
 		"./contrib/etc/get_node_source.sh",
-		s.Nodeversion,
+		v.GetString("Nodeversion"),
 		dir+"/src/",
+		defaultRepo,
 	)
 	check(err)
 	return err
@@ -150,22 +148,22 @@ func runDownloadScript(s Specification) error {
 // Squash the image using a shell command
 func Squash() {
 	fmt.Println("Squashing the image...")
-	s := ParseEnvVars()
-	tags := getTags(s)
+	tags := getTags()
+	fmt.Println(tags)
 	var envs = map[string]string{}
-	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker-squash", tags[0], "-f", fromImage(s), "-t", tags[0])
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker-squash", tags[0], "-f", fromImage(), "-t", tags[0])
 	check(err)
 }
 
-// Run a test on the image
+// Run a basic test on the image
 func Test() {
 	fmt.Println("Testing the image...")
 	sh.Rm("src/.")
-	s := ParseEnvVars()
-	fmt.Println("Cleanup image " + imageName(s))
+	v := config()
+	fmt.Println("Cleanup image " + imageName(v))
 	var envs = map[string]string{
-		"BUILDER":      imageName(s),
-		"NODE_VERSION": s.Nodeversion,
+		"BUILDER":      imageName(v),
+		"NODE_VERSION": v.GetString("Nodeversion"),
 	}
 	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "test/run.sh")
 	check(err)
@@ -173,19 +171,19 @@ func Test() {
 
 // create archive with sources
 func Archive() error {
-	s := ParseEnvVars()
+	v := config()
 	os.MkdirAll("dist", os.ModePerm)
 	var envs = map[string]string{
-		"ARCHIVE":      archiveName(s),
-		"NODE_VERSION": s.Nodeversion,
-		"OS":           s.Os,
-		"DOCKERFILE":   s.Dockerfile,
-		"IMAGE_TAG":    s.Imagetag,
-		"LATEST":       isLatest(s),
-		"MAJOR_TAG":    s.Majortag,
-		"MINOR_TAG":    s.Minortag,
-		"IMAGE_NAME":   s.Imagename,
-		"NPM_VERSION":  s.Npmversion,
+		"ARCHIVE":      archiveName(v),
+		"NODE_VERSION": v.GetString("Nodeversion"),
+		"OS":           v.GetString("Os"),
+		"DOCKERFILE":   v.GetString("Dockerfile"),
+		"IMAGE_TAG":    v.GetString("Imagetag"),
+		"LATEST":       isLatest(v),
+		"MAJOR_TAG":    v.GetString("Majortag"),
+		"MINOR_TAG":    v.GetString("Minortag"),
+		"IMAGE_NAME":   v.GetString("Imagename"),
+		"NPM_VERSION":  v.GetString("Npmversion"),
 	}
 	_, err := sh.Exec(envs,
 		os.Stdout,
@@ -199,19 +197,15 @@ func Archive() error {
 // upload archive to S3
 // Upload input parameters
 func Upload() error {
-	// s3cmd put $(ARCHIVE) "$(S3BUCKET)/$(ARCHIVE)"
-	s := ParseEnvVars()
-	var envs = map[string]string{
-		"AWS_ACCESS_KEY_ID":     s.AwsAccessKey,
-		"AWS_SECRET_ACCESS_KEY": s.AwsSecretAccessKey,
-	}
+	v := config()
+	var envs = map[string]string{}
 	_, err := sh.Exec(envs,
 		os.Stdout,
 		os.Stdout,
 		"s3cmd",
 		"put",
-		archiveName(s),
-		"s3://"+bucketName+"/sources/"+archiveName(s),
+		archiveName(v),
+		"s3://"+bucketName+"/sources/"+archiveName(config()),
 	)
 	check(err)
 	return err
@@ -219,8 +213,9 @@ func Upload() error {
 
 // helper functions
 // get the FROM image string
-func fromImage(s Specification) string {
-	b, err := ioutil.ReadFile(s.Dockerfile) // just pass the file name
+func fromImage() string {
+	v := config()
+	b, err := ioutil.ReadFile(v.GetString("Dockerfile"))
 	if err != nil {
 		fmt.Print(err)
 	}

@@ -16,17 +16,11 @@ import (
 	"github.com/mholt/archiver"
 )
 
-// mg contains helpful utility functions, like Deps
-
 const defaultDockerAPIVersion = "v1.37"
-
-// Default target to run when none is specified
-// If not set, running mage will list available targets
-// var Default = Build
 
 // Build the container using the native docker api
 func Build() error {
-	s := ParseEnvVars()
+	v := config()
 	InstallSources()
 	err := archiver.Tar.Make("/tmp/nodejs-distro.tar", []string{
 		"contrib",
@@ -40,18 +34,19 @@ func Build() error {
 	dockerBuildContext, err := os.Open("/tmp/nodejs-distro.tar")
 	defer dockerBuildContext.Close()
 	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
-	pb := preBuiltEnv(s)
+	pb := preBuiltEnv(v)
+	nv := v.GetString("Nodeversion")
 	args := map[string]*string{
 		"PREBUILT":     &pb,
-		"NODE_VERSION": &s.Nodeversion,
+		"NODE_VERSION": &nv,
 	}
 	options := types.ImageBuildOptions{
 		SuppressOutput: false,
 		Remove:         true,
 		ForceRemove:    true,
 		PullParent:     true,
-		Tags:           getTags(s),
-		Dockerfile:     "image/" + s.Os + "/Dockerfile",
+		Tags:           getTags(),
+		Dockerfile:     "image/" + v.GetString("Os") + "/Dockerfile",
 		BuildArgs:      args,
 	}
 	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
@@ -63,31 +58,32 @@ func Build() error {
 	return jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 }
 
-func getTags(s Specification) []string {
-	tags := []string{s.Imagename + ":" + s.Imagetag}
-	if s.Latest {
-		tags = append(tags, s.Imagename+":latest")
+func getTags() []string {
+	v := config()
+	tags := []string{imageName(v) + ":" + v.GetString("Imagetag")}
+	if v.GetBool("Latest") {
+		tags = append(tags, imageName(v)+":latest")
 	}
-	if s.Majortag != "" {
-		tags = append(tags, s.Imagename+":"+s.Majortag)
+	if v.IsSet("Majortag") {
+		tags = append(tags, imageName(v)+":"+v.GetString("Majortag"))
 	}
-	if s.Minortag != "" {
-		tags = append(tags, s.Imagename+":"+s.Minortag)
+	if v.IsSet("Minortag") {
+		tags = append(tags, imageName(v)+":"+v.GetString("Minortag"))
 	}
-	if s.Lts != "" {
-		tags = append(tags, s.Imagename+":"+s.Lts)
+	if v.IsSet("Lts") {
+		tags = append(tags, imageName(v)+":"+v.GetString("Lts"))
 	}
 	return tags
 }
 
 // publish to docker hub
 func Publish() error {
-	s := ParseEnvVars()
+	v := config()
 	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
 
 	authConfig := types.AuthConfig{
-		Username: s.Dockeruser,
-		Password: s.Dockerpass,
+		Username: v.GetString("Dockeruser"),
+		Password: v.GetString("Dockerpass"),
 	}
 	encodedJSON, err := json.Marshal(authConfig)
 	if err != nil {
@@ -99,7 +95,7 @@ func Publish() error {
 		RegistryAuth: authStr,
 		All:          true,
 	}
-	pushResponse, err := cli.ImagePush(context.Background(), imageName(s), options)
+	pushResponse, err := cli.ImagePush(context.Background(), imageName(v), options)
 	check(err)
 	defer pushResponse.Close()
 
@@ -109,30 +105,29 @@ func Publish() error {
 
 // publish to Red Hat Catalog
 func PublishRedHat() error {
-	s := ParseEnvVars()
+	v := config()
 	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
 
 	authConfig := types.AuthConfig{
 		Username:      "unused",
-		Password:      s.Rhsecret,
-		ServerAddress: s.Rhendpoint,
+		Password:      v.GetString("Rhsecret"),
+		ServerAddress: v.GetString("Rhendpoint"),
 	}
-	fmt.Println(authConfig)
+	// fmt.Println(authConfig)
 	encodedJSON, err := json.Marshal(authConfig)
 	if err != nil {
 		panic(err)
 	}
 	authStr := base64.URLEncoding.EncodeToString(encodedJSON)
-	authBody, err := cli.RegistryLogin(context.Background(), authConfig)
+	_, err = cli.RegistryLogin(context.Background(), authConfig)
 	check(err)
-	fmt.Println(authBody)
 
 	options := types.ImagePushOptions{
 		RegistryAuth: authStr,
 		All:          true,
 	}
-	RedHatImageName := s.Rhendpoint + "/" + s.Rhproject + "/nearform-s2i-node" + ":" + s.Imagetag
-	err = cli.ImageTag(context.Background(), imageName(s), RedHatImageName)
+	RedHatImageName := v.GetString("Rhendpoint") + "/" + v.GetString("Rhproject") + "/nearform-s2i-node" + ":" + v.GetString("Imagetag")
+	err = cli.ImageTag(context.Background(), imageName(v), RedHatImageName)
 	check(err)
 	pushResponse, err := cli.ImagePush(context.Background(), RedHatImageName, options)
 	check(err)
@@ -144,10 +139,9 @@ func PublishRedHat() error {
 
 // Clean up sources and the images we created
 func Clean() error {
-	s := ParseEnvVars()
 	cli, _ := client.NewClientWithOpts(client.WithVersion(defaultDockerAPIVersion))
 	options := types.ImageRemoveOptions{}
-	tags := getTags(s)
+	tags := getTags()
 	var err error
 	for i := 0; i < len(tags); i++ {
 		removeResponse, err := cli.ImageRemove(context.Background(), tags[i], options)
