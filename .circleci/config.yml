@@ -27,7 +27,7 @@ jobs:
                 echo "export TAG=test-only" >> $BASH_ENV
                 echo "export PREBUILT=true" >> $BASH_ENV
                 export OS=centos7 && source contrib/etc/util.sh
-                echo "export FROM_DATA=$(getBaseImageForOs)" >> $BASH_ENV
+                echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
             else
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
