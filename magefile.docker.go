@@ -134,7 +134,7 @@ func PublishRedHat() error {
 		All:          true,
 	}
 	RedHatImageName := v.GetString("Rhendpoint") + "/" + v.GetString("Rhproject") + "/nearform-s2i-node" + ":" + v.GetString("Imagetag")
-	err = cli.ImageTag(context.Background(), imageName(v), RedHatImageName)
+	err = cli.ImageTag(context.Background(), imageName(v)+":"+v.GetString("Imagetag"), RedHatImageName)
 	check(err)
 	pushResponse, err := cli.ImagePush(context.Background(), RedHatImageName, options)
 	check(err)
