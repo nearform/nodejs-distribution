@@ -2,6 +2,10 @@
 
 set -ex
 
+if [ "$PREBUILT" = "true" ]; then
+    PREBUILT=tag
+fi
+
 NODE_VERSION="${1}"
 SRCDIR="${2}"
 NODEDIR="node-v${NODE_VERSION}"
