@@ -49,15 +49,23 @@ func config() *viper.Viper {
 		v.BindEnv("Majortag", "MAJOR")
 		v.BindEnv("Minortag", "MINOR")
 		v.BindEnv("LatestString", "LATEST")
-		latest, err := strconv.ParseBool(v.GetString("LatestString"))
-		check(err)
-		v.Set("Latest", latest)
+		if len(v.GetString("LatestString")) == 0 {
+			latest, err := strconv.ParseBool(v.GetString("LatestString"))
+			check(err)
+			v.Set("Latest", latest)
+		} else {
+			v.Set("Latest", false)
+		}
 		v.BindEnv("Lts", "LTS")
 		v.BindEnv("Fromdata", "FROM_DATA")
 		v.BindEnv("PrebuiltString", "PREBUILT")
-		prebuilt, err := strconv.ParseBool(v.GetString("PrebuiltString"))
-		check(err)
-		v.Set("Prebuilt", prebuilt)
+		if len(v.GetString("PrebuiltString")) == 0 {
+			prebuilt, err := strconv.ParseBool(v.GetString("PrebuiltString"))
+			check(err)
+			v.Set("Prebuilt", prebuilt)
+		} else {
+			v.Set("Prebuilt", false)
+		}
 	}
 	v.BindEnv("Dockeruser", "DOCKER_USER")
 	v.BindEnv("Dockerpass", "DOCKER_PASS")
