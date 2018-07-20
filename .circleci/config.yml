@@ -68,7 +68,7 @@ jobs:
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
                     export RH_SECRET=$(getProjectSecret)
-                    export RH_ENDPOINT="scan.connect.redhat.com/"
+                    export RH_ENDPOINT="scan.connect.redhat.com"
                     export RH_PROJECT=$(getProjectId)
                     mage publishRedHat
                 fi

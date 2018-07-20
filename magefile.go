@@ -30,6 +30,8 @@ func config() *viper.Viper {
 	v.SetDefault("Lts", "")
 	v.SetDefault("Fromdata", "{}")
 	v.SetDefault("Prebuilt", false)
+	v.SetDefault("Repo", "https://github.com/nodejs/node.git")
+	v.SetDefault("Commithash", "")
 	if len(configFile) > 0 {
 		extension := filepath.Ext(configFile)
 		bareName := configFile[0 : len(configFile)-len(extension)]
@@ -66,6 +68,8 @@ func config() *viper.Viper {
 		} else {
 			v.Set("Prebuilt", false)
 		}
+		v.BindEnv("Repo", "REPO")
+		v.BindEnv("Commithash", "COMMIT_HASH")
 	}
 	v.BindEnv("Dockeruser", "DOCKER_USER")
 	v.BindEnv("Dockerpass", "DOCKER_PASS")
@@ -90,6 +94,8 @@ func ShowConfig() {
 	fmt.Println("LTS: " + v.GetString("Lts"))
 	fmt.Println("FROM_DATA: " + v.GetString("Fromdata"))
 	fmt.Println("PREBUILT: " + strconv.FormatBool(v.GetBool("Prebuilt")))
+	fmt.Println("REPO: " + v.GetString("Repo"))
+	fmt.Println("COMMIT_HASH: " + v.GetString("Commithash"))
 }
 
 // get base image name
@@ -113,7 +119,7 @@ func preBuiltEnv(v *viper.Viper) string {
 		fmt.Println("Prebuilt=true, return 'T' for ENV var")
 		return "T"
 	}
-	fmt.Println("Prebuilt=true, return ' ' for ENV var")
+	fmt.Println("Prebuilt=false, return ' ' for ENV var")
 	return " "
 }
 
@@ -161,7 +167,8 @@ func runDownloadScript(v *viper.Viper) error {
 		"./contrib/etc/get_node_source.sh",
 		v.GetString("Nodeversion"),
 		dir+"/src/",
-		defaultRepo,
+		v.GetString("Repo"),
+		v.GetString("Commithash"),
 	)
 	check(err)
 	return err
