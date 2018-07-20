@@ -2,7 +2,7 @@
 
 set -ex
 
-if [ "$PREBUILT" = "true" ]; then
+if [ "$PREBUILT" = "true" ] || [ "$PREBUILT" = true ]; then
     PREBUILT=T
 fi
 
