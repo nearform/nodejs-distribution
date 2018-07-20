@@ -157,5 +157,9 @@ func Clean() error {
 		}
 		fmt.Println(removeResponse)
 	}
+	err = os.RemoveAll("src/")
+	check(err)
+	os.MkdirAll("src/", os.ModePerm)
+	check(err)
 	return err
 }
