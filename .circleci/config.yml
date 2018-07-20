@@ -38,6 +38,8 @@ jobs:
                     exit 1
                 fi
             fi
+            cat $BASH_ENV
+
       - run:
           name: Info
           command: |

@@ -49,7 +49,7 @@ func config() *viper.Viper {
 		v.BindEnv("Majortag", "MAJOR")
 		v.BindEnv("Minortag", "MINOR")
 		v.BindEnv("LatestString", "LATEST")
-		if len(v.GetString("LatestString")) == 0 {
+		if len(v.GetString("LatestString")) != 0 {
 			latest, err := strconv.ParseBool(v.GetString("LatestString"))
 			check(err)
 			v.Set("Latest", latest)
@@ -59,7 +59,7 @@ func config() *viper.Viper {
 		v.BindEnv("Lts", "LTS")
 		v.BindEnv("Fromdata", "FROM_DATA")
 		v.BindEnv("PrebuiltString", "PREBUILT")
-		if len(v.GetString("PrebuiltString")) == 0 {
+		if len(v.GetString("PrebuiltString")) != 0 {
 			prebuilt, err := strconv.ParseBool(v.GetString("PrebuiltString"))
 			check(err)
 			v.Set("Prebuilt", prebuilt)
@@ -110,8 +110,10 @@ func isLatest(v *viper.Viper) string {
 
 func preBuiltEnv(v *viper.Viper) string {
 	if v.GetBool("Prebuilt") {
+		fmt.Println("Prebuilt=true, return 'T' for ENV var")
 		return "T"
 	}
+	fmt.Println("Prebuilt=true, return ' ' for ENV var")
 	return " "
 }
 
