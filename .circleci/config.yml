@@ -2,19 +2,19 @@ version: 2
 jobs:
   build:
     docker:
-        - image: nearform/docker_circleci:0.0.11
+        - image: nearform/docker_circleci:0.0.12
     resource_class: xlarge
     steps:
       - checkout
       - setup_remote_docker:
             docker_layer_caching: true
 
-      - run:
-          name: Install mage
-          command: |
-            wget https://s3.amazonaws.com/node-distro/makeDistro
-            sudo mv makeDistro /usr/local/bin/mage
-            sudo chmod +x /usr/local/bin/mage
+    #   - run:
+    #       name: Install mage
+    #       command: |
+    #         wget https://s3.amazonaws.com/node-distro/makeDistro
+    #         sudo mv makeDistro /usr/local/bin/mage
+    #         sudo chmod +x /usr/local/bin/mage
       - run:
           name: Configure
           command: |
@@ -67,8 +67,9 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
                 if ! isDebug && shouldPublish; then
-                    echo $(getProjectSecret) | docker login -u unused scan.connect.redhat.com --password-stdin
-                    export RH_PID=$(getProjectId)
+                    export RH_SECRET=$(getProjectSecret)
+                    export RH_ENDPOINT="scan.connect.redhat.com/"
+                    export RH_PROJECT=$(getProjectId)
                     mage publishRedHat
                 fi
             else
