@@ -18,7 +18,6 @@ jobs:
       - run:
           name: Configure
           command: |
-            source contrib/etc/util.sh
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
                 echo "export VERSION=10.0.0" >> $BASH_ENV
@@ -27,8 +26,10 @@ jobs:
                 echo "export NPM=5.6.0" >> $BASH_ENV
                 echo "export TAG=test-only" >> $BASH_ENV
                 echo "export PREBUILT=true" >> $BASH_ENV
+                source contrib/etc/util.sh
                 echo "export FROM_DATA=$(getBaseImageForOs)" >> $BASH_ENV
             else
+                source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     echo ...
                     echo "export FROM_DATA=$(getBaseImageForOs)" >> $BASH_ENV
