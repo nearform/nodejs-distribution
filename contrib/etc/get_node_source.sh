@@ -3,7 +3,7 @@
 set -ex
 
 if [ "$PREBUILT" = "true" ]; then
-    PREBUILT=tag
+    PREBUILT=T
 fi
 
 NODE_VERSION="${1}"
