@@ -1,0 +1,14 @@
+Os: centos7 # the base OS, this requires a Dockerfile in a directory withe same name under the "/image/" directory
+Nodeversion: 10.6.0 # node.js version to build an image for
+Npmversion: 5.6.0 # npm version to include
+Imagetag: 10.6.0 # main tag for the image
+Majortag: 10 # if this is a build for the latest major version, this should hold that tag. Results in an additional tag
+Minortag: 10.6 # if this is a build for the latest minor version, this should hold that tag. Results in an additional tag
+V8version: 6.7.288.49 # V8 engine version, for reference
+Lts:  # empty string is the default, should be like 'Carbon', 'Boron'. Results in an additional tag
+Latest: true # false is the default. Results in an additional tag
+Prebuilt: false # false is the default, true will download a release for the node.js version and skip compilation
+# this will become a label in the image, for information purposes. Used by the notifier.
+Fromdata: "{ \"from\": { \"image\": \"centos/s2i-base-centos7\", \"tag\": \"latest\", \"last_updated\": \"2018-06-05T16:17:48.190766Z\", \"sha\":\"g98fd7g08sdf7g098s7098f70s9d8\" } }"
+Repo: https://github.com/nodejs/node.git # git repository to download Node from
+Commithash: c3f8dd6 # Hash of the commit we want to build - empty means use version tag

@@ -1,3 +1,8 @@
 test.sh
 contrib/demo/node_modules
 dist
+src
+test_env_vars.sh
+sources-nearform*.*
+checksum
+makeDistro
