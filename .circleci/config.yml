@@ -32,7 +32,7 @@ jobs:
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     echo ...
-                    echo "export FROM_DATA=$(getBaseImageForOs)" >> $BASH_ENV
+                    echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
                 else
                     echo "Unsupported os: $OS"
                     exit 1

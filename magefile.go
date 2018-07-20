@@ -184,7 +184,7 @@ func Test() {
 	v := config()
 	fmt.Println("Cleanup image " + imageName(v))
 	var envs = map[string]string{
-		"BUILDER":      imageName(v),
+		"BUILDER":      imageName(v) + ":" + v.GetString("Imagetag"),
 		"NODE_VERSION": v.GetString("Nodeversion"),
 	}
 	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "test/run.sh")
