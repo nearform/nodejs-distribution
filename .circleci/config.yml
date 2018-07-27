@@ -13,7 +13,7 @@ jobs:
           name: Install and configure treasury-cli
           command: |
             wget https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.1
-            sudo mkdir /opt/treasury-cli && mv treasury-cli_v0.0.1 /opt/treasury-cli/treasury-cli
+            sudo mkdir /opt/treasury-cli && sudo mv treasury-cli_v0.0.1 /opt/treasury-cli/treasury-cli
             sudo chmod +x /opt/treasury-cli/treasury-cli
             wget https://s3.amazonaws.com/treasury-cli/config.yaml.example
             sudo mv config.yaml.example /opt/treasury-cli/treasury-cli
