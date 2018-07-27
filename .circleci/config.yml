@@ -14,7 +14,8 @@ jobs:
           command: |
             sudo mkdir /opt/treasury-cli && sudo wget -O /opt/treasury-cli/treasury-cli https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.1
             sudo chmod +x /opt/treasury-cli/treasury-cli
-            sudo wget -O /opt/treasury-cli/config.yaml https://s3.amazonaws.com/treasury-cli/config.yaml.example
+            sudo wget -O /opt/treasury-cli/config.yaml.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
+            sudo .circleci/generate_treasury_config.sh
 
       - run:
           name: Configure
