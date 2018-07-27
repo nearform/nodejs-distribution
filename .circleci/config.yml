@@ -9,12 +9,15 @@ jobs:
       - setup_remote_docker:
             docker_layer_caching: true
 
-    #   - run:
-    #       name: Install mage
-    #       command: |
-    #         wget https://s3.amazonaws.com/node-distro/makeDistro
-    #         sudo mv makeDistro /usr/local/bin/mage
-    #         sudo chmod +x /usr/local/bin/mage
+      - run:
+        name: Install and configure treasury-cli
+        command: |
+          wget https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.1
+          sudo mkdir /opt/treasury-cli && mv treasury-cli_v0.0.1 /opt/treasury-cli/treasury-cli
+          sudo chmod +x /opt/treasury-cli/treasury-cli
+          wget https://s3.amazonaws.com/treasury-cli/config.yaml.example
+          sudo mv config.yaml.example /opt/treasury-cli/treasury-cli
+
       - run:
           name: Configure
           command: |
