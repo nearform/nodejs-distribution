@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+    "os/exec"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
