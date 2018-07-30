@@ -19,12 +19,6 @@ jobs:
             sudo .circleci/generate_treasury_config.sh $DOCKER_USER $DOCKER_PASS $TREASURY_USER $TREASURY_PASS
 
       - run:
-          name: Test treasury-cli
-          command: |
-            docker pull busybox:latest
-            cd /opt/treasury-cli && ./treasury-cli busybox
-
-      - run:
           name: Configure
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
@@ -62,6 +56,10 @@ jobs:
       - run:
           name: Test
           command: mage test
+      - run:
+          name: Security scan
+          command: |
+            cd /opt/treasury-cli && ./treasury-cli nearform/centos7-s2i-nodejs:test-only
       - run:
           name: Publish to Docker Hub
           command: |
