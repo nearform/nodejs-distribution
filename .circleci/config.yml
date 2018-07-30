@@ -62,7 +62,7 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                mage publish
+                mage scanpublish
             fi
       - run:
           name: Publish to Red Hat
