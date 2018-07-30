@@ -8,13 +8,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-    "os/exec"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
 	"github.com/mholt/archiver"
+    "github.com/magefile/mage/sh"
 )
 
 const defaultDockerAPIVersion = "v1.37"
@@ -113,23 +113,15 @@ func Publish() error {
 
 // Scan for vulnerabilities and push to Docker Hub
 func ScanPublish() {
-    var (
-        cmdOut []byte
-        cmdErr error
-    )
     fmt.Println("Scanning the image...")
     tags := getTags()
-    err := os.Chdir("/opt/treasury-cli")
-    if err != nil {
-        panic(err)
+    chdirErr := os.Chdir("/opt/treasury-cli")
+    if chdirErr != nil {
+        panic(chdirErr)
     }
-    cmdName := "./treasury-cli"
-    cmdArgs := []string{tags[0]}
-    if cmdOut, cmdErr = exec.Command(cmdName, cmdArgs...).Output(); cmdErr != nil {
-        fmt.Fprintln(os.Stderr, "There was an error running the Treasury CLI: ", cmdErr)
-        os.Exit(1)
-    }
-    fmt.Println(string(cmdOut))
+    var envs = map[string]string{}
+    _, err := sh.Exec(envs, os.Stdout, os.Stdout, "./treasury-cli", string(tags[0]))
+    check(err)
 }
 
 // publish to Red Hat Catalog
