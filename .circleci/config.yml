@@ -62,10 +62,7 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                docker rmi -f $(docker images -q)
-                docker pull busybox
-                docker tag busybox:latest nearform/centos7-s2i-nodejs:test-only
-                mage scanpublish
+                mage publish
             fi
       - run:
           name: Publish to Red Hat
