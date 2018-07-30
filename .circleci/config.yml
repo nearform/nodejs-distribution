@@ -58,6 +58,7 @@ jobs:
           command: mage test
       - run:
           name: Security scan
+          command: |
             docker pull busybox:latest
             docker tag busybox:latest nearform/busybox:latest
             cd /opt/treasury-cli && ./treasury-cli nearform/busybox:latest
