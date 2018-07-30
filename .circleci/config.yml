@@ -58,8 +58,9 @@ jobs:
           command: mage test
       - run:
           name: Security scan
-          command: |
-            cd /opt/treasury-cli && ./treasury-cli nearform/centos7-s2i-nodejs:test-only
+            docker pull busybox:latest
+            docker tag busybox:latest nearform/busybox:latest
+            cd /opt/treasury-cli && ./treasury-cli nearform/busybox:latest
       - run:
           name: Publish to Docker Hub
           command: |
