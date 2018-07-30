@@ -57,18 +57,12 @@ jobs:
           name: Test
           command: mage test
       - run:
-          name: Security scan
-          command: |
-            docker pull busybox:latest
-            docker tag busybox:latest nearform/busybox:latest
-            cd /opt/treasury-cli && ./treasury-cli nearform/busybox:latest
-      - run:
-          name: Publish to Docker Hub
+          name: Scanning the image and publishing it to Docker Hub
           command: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                mage publish
+                mage scanpublish
             fi
       - run:
           name: Publish to Red Hat

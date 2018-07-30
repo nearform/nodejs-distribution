@@ -110,6 +110,27 @@ func Publish() error {
 	return jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFd, isTerm, nil)
 }
 
+// Scan for vulnerabilities and push to Docker Hub
+func ScanPublish() {
+    var (
+        cmdOut []byte
+        cmdErr error
+    )
+    fmt.Println("Scanning the image...")
+    tags := getTags()
+    err := os.Chdir("/opt/treasury-cli")
+    if err != nil {
+        panic(err)
+    }
+    cmdName := "./treasury-cli"
+    cmdArgs := []string{tags[0]}
+    if cmdOut, cmdErr = exec.Command(cmdName, cmdArgs...).Output(); cmdErr != nil {
+        fmt.Fprintln(os.Stderr, "There was an error running the Treasury CLI: ", cmdErr)
+        os.Exit(1)
+    }
+    fmt.Println(string(cmdOut))
+}
+
 // publish to Red Hat Catalog
 func PublishRedHat() error {
 	v := config()
