@@ -10,15 +10,6 @@ jobs:
             docker_layer_caching: true
 
       - run:
-          name: Install and configure treasury-cli
-          command: |
-            sudo mkdir /opt/treasury-cli && sudo wget -O /opt/treasury-cli/treasury-cli https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.1
-            sudo chmod +x /opt/treasury-cli/treasury-cli
-            sudo wget -O /opt/treasury-cli/config.yaml.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
-            sudo apt-get update && sudo apt-get -y install gettext-base
-            sudo .circleci/generate_treasury_config.sh $DOCKER_USER $DOCKER_PASS $TREASURY_USER $TREASURY_PASS
-
-      - run:
           name: Configure
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
@@ -42,6 +33,23 @@ jobs:
                 fi
             fi
             cat $BASH_ENV
+
+      - run:
+          name: Install and configure treasury-cli
+          command: |
+            sudo mkdir /opt/treasury-cli && sudo wget -O /opt/treasury-cli/treasury-cli https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.1
+            sudo chmod +x /opt/treasury-cli/treasury-cli
+            sudo apt-get update && sudo apt-get -y install gettext-base
+            echo "$RH_ENDPOINT"
+            echo "$RH_SECRET"
+            echo "$RH_TARGET"
+            if [ "$OS" == "rhel7" ]; then
+                sudo wget -O /opt/treasury-cli/config.yaml.rh.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
+                sudo .circleci/generate_treasury_config.sh $DOCKER_USER $DOCKER_PASS $TREASURY_USER $TREASURY_PASS
+            else
+                sudo wget -O /opt/treasury-cli/config.yaml.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
+                sudo .circleci/generate_treasury_config.sh $DOCKER_USER $DOCKER_PASS $TREASURY_USER $TREASURY_PASS
+            fi
 
       - run:
           name: Info
