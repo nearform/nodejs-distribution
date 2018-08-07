@@ -39,14 +39,6 @@ jobs:
           command: |
             sudo mkdir /opt/treasury-cli && sudo wget -O /opt/treasury-cli/treasury-cli https://s3.amazonaws.com/treasury-cli/treasury-cli_v0.0.2
             sudo chmod +x /opt/treasury-cli/treasury-cli
-            sudo apt-get update && sudo apt-get -y install gettext-base
-            if [ "$OS" == "rhel7" ]; then
-                sudo wget -O /opt/treasury-cli/config.yaml.rh.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
-                sudo .circleci/generate_treasury_config.sh $RH_USER $RH_SECRET $TREASURY_USER $TREASURY_PASS
-            else
-                sudo wget -O /opt/treasury-cli/config.yaml.example https://s3.amazonaws.com/treasury-cli/config.yaml.example
-                sudo .circleci/generate_treasury_config.sh $DOCKER_USER $DOCKER_PASS $TREASURY_USER $TREASURY_PASS
-            fi
 
       - run:
           name: Info
@@ -67,7 +59,9 @@ jobs:
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                # mage publish
+                export EXTERNAL_HOST=${DOCKER_ENDPOINT}
+                export EXTERNAL_USER=${DOCKER_USER}
+                export EXTERNAL_PASS=${DOCKER_PASS}
                 mage scanpublish
             fi
       - run:
@@ -79,7 +73,9 @@ jobs:
                     export RH_SECRET=$(getProjectSecret)
                     export RH_ENDPOINT="scan.connect.redhat.com"
                     export RH_PROJECT=$(getProjectId)
-                    # mage publishRedHat
+                    export EXTERNAL_HOST=${RH_ENDPOINT}
+                    export EXTERNAL_USER=${RH_USER}
+                    export EXTERNAL_PASS=${RH_SECRET}
                     mage scanpublish
                 fi
             else
