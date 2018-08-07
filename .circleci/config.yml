@@ -73,10 +73,11 @@ jobs:
                     export RH_SECRET=$(getProjectSecret)
                     export RH_ENDPOINT="scan.connect.redhat.com"
                     export RH_PROJECT=$(getProjectId)
-                    export EXTERNAL_HOST=${RH_ENDPOINT}
-                    export EXTERNAL_USER=${RH_USER}
-                    export EXTERNAL_PASS=${RH_SECRET}
+                    export EXTERNAL_HOST=${TREASURY_HOST}
+                    export EXTERNAL_USER=${TREASURY_USER}
+                    export EXTERNAL_PASS=${TREASURY_PASS}
                     mage scanpublish
+                    mage publishRedHat
                 fi
             else
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
