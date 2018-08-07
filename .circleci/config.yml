@@ -65,7 +65,7 @@ jobs:
                 mage scanpublish
             fi
       - run:
-          name: Publish to Red Hat
+          name: Scan the image and publish to the Red Hat Catalog
           command: |
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
