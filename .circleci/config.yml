@@ -19,7 +19,7 @@ jobs:
                 echo "export V8=6.6.346.24" >> $BASH_ENV
                 echo "export NPM=5.6.0" >> $BASH_ENV
                 echo "export TAG=test-only" >> $BASH_ENV
-                echo "export PREBUILT=true" >> $BASH_ENV
+                # echo "export PREBUILT=true" >> $BASH_ENV
                 export OS=centos7 && source contrib/etc/util.sh
                 echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
             else
@@ -85,7 +85,7 @@ jobs:
           name: Upload
           command: |
             pwd
-            ls -Alh
+            ls -Alh src
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
