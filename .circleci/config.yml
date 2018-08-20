@@ -78,6 +78,9 @@ jobs:
       - run:
           name: Archive
           command: |
+            pwd
+            ls -Alh
+            ls -Alh src
             if [ "$OS" == "rhel7" ]; then
                 mage archive
             else
