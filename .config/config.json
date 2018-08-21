@@ -21,13 +21,6 @@
           "repository_name": "rhel7-s2i-nodejs8",
           "secret_env_name": "NODEJS_8_SECRET"
         },{
-          "name": "Node.js 9.x LTS Distribution",
-          "id": "02-006131",
-          "version": "9",
-          "project_id": "p1206334362250d2f5b271c7ec03c455c0f3d084709",
-          "repository_name": "rhel7-s2i-nodejs9",
-          "secret_env_name": "NODEJS_9_SECRET"
-        },{
           "name": "Node.js 10.x Distribution",
           "id": "02-007621",
           "version": "10",
