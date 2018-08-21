@@ -28,7 +28,7 @@ func getDockerClient() *client.Client {
 // Build the container using the native docker api
 func Build() error {
 	v := config()
-	InstallSources()
+	// InstallSources()
 	err := archiver.Tar.Make("/tmp/nodejs-distro.tar", []string{
 		"contrib",
 		"src",

@@ -19,7 +19,7 @@ jobs:
                 echo "export V8=6.6.346.24" >> $BASH_ENV
                 echo "export NPM=5.6.0" >> $BASH_ENV
                 echo "export TAG=test-only" >> $BASH_ENV
-                echo "export PREBUILT=true" >> $BASH_ENV
+                    echo "export PREBUILT=true" >> $BASH_ENV
                 export OS=centos7 && source contrib/etc/util.sh
                 echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
             else
@@ -38,6 +38,10 @@ jobs:
           name: Info
           command: |
             mage showConfig
+      - run:
+          name: Install Sources
+          command: |
+            mage installSources
       - run:
           name: Build
           command: mage build
@@ -69,10 +73,6 @@ jobs:
     #         else
     #             echo "OS is not [rhel7] not publishing to Red Hat Catalog"
     #         fi
-      - run:
-          name: Install Sources
-          command: |
-            mage installSources
       - run:
           name: Archive
           command: |
