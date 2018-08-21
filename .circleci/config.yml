@@ -44,7 +44,10 @@ jobs:
             mage installSources
       - run:
           name: Build
-          command: mage build
+          command: |
+            mage build
+            ls -Alh
+            pwd
       - run:
           name: Docker squash
           command: mage squash
@@ -76,6 +79,8 @@ jobs:
       - run:
           name: Archive
           command: |
+            pwd
+            ls -Alh src
             if [ "$OS" == "rhel7" ]; then
                 mage archive
             else
@@ -84,8 +89,6 @@ jobs:
       - run:
           name: Upload
           command: |
-            pwd
-            ls -Alh src
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
