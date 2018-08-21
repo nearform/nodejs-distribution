@@ -42,18 +42,24 @@ jobs:
           name: Install Sources
           command: |
             mage installSources
-    #   - run:
-    #       name: Build
-    #       command: |
-    #         mage build
-    #         ls -Alh
-    #         pwd
+      - run:
+          name: Build
+          command: |
+            mage build
+            ls -Alh
+            pwd
       - run:
           name: Docker squash
-          command: mage squash
+          command: |
+            mage squash
+            ls -Alh
+            pwd
       - run:
           name: Test
-          command: mage test
+          command: |
+            mage test
+            ls -Alh
+            pwd
       - run:
           name: Publish to Docker Hub
           command: |
