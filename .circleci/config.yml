@@ -19,7 +19,7 @@ jobs:
                 echo "export V8=6.6.346.24" >> $BASH_ENV
                 echo "export NPM=5.6.0" >> $BASH_ENV
                 echo "export TAG=test-only" >> $BASH_ENV
-                # echo "export PREBUILT=true" >> $BASH_ENV
+                echo "export PREBUILT=true" >> $BASH_ENV
                 export OS=centos7 && source contrib/etc/util.sh
                 echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
             else
@@ -34,27 +34,27 @@ jobs:
             fi
             cat $BASH_ENV
 
-    #   - run:
-    #       name: Info
-    #       command: |
-    #         mage showConfig
-    #   - run:
-    #       name: Build
-    #       command: mage build
-    #   - run:
-    #       name: Docker squash
-    #       command: mage squash
-    #   - run:
-    #       name: Test
-    #       command: mage test
-    #   - run:
-    #       name: Publish to Docker Hub
-    #       command: |
-    #         if [ "$OS" == "rhel7" ]; then
-    #             echo "OS is [rhel7] not publishing to Docker Hub"
-    #         else
-    #             mage publish
-    #         fi
+      - run:
+          name: Info
+          command: |
+            mage showConfig
+      - run:
+          name: Build
+          command: mage build
+      - run:
+          name: Docker squash
+          command: mage squash
+      - run:
+          name: Test
+          command: mage test
+      - run:
+          name: Publish to Docker Hub
+          command: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "OS is [rhel7] not publishing to Docker Hub"
+            else
+                mage publish
+            fi
     #   - run:
     #       name: Publish to Red Hat
     #       command: |
