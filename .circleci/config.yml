@@ -32,7 +32,7 @@ jobs:
                     exit 1
                 fi
             fi
-            cat $BASH_ENV
+            # cat $BASH_ENV
 
       - run:
           name: Info
@@ -46,13 +46,9 @@ jobs:
           name: Build
           command: |
             mage build
-            ls -Alh
-            pwd
       - run:
           name: Archive
           command: |
-            pwd
-            ls -Alh src
             if [ "$OS" == "rhel7" ]; then
                 mage archive
             else
@@ -72,14 +68,10 @@ jobs:
           name: Docker squash
           command: |
             mage squash
-            ls -Alh
-            pwd
       - run:
           name: Test
           command: |
             mage test
-            ls -Alh
-            pwd
       - run:
           name: Publish to Docker Hub
           command: |
