@@ -111,8 +111,8 @@ func Publish() error {
 	return jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFd, isTerm, nil)
 }
 
-// Scan for vulnerabilities and push to Docker Hub
-func ScanPublish() {
+// Scan the container image for vulnerabilities using treasury-cli
+func Scan() {
     fmt.Println("Scanning the image...")
     tags := getTags()
     chdirErr := os.Chdir("/opt/treasury-cli")

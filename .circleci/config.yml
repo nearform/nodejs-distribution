@@ -62,7 +62,8 @@ jobs:
                 export EXTERNAL_HOST=${DOCKER_ENDPOINT}
                 export EXTERNAL_USER=${DOCKER_USER}
                 export EXTERNAL_PASS=${DOCKER_PASS}
-                mage scanpublish
+                mage scan
+                mage publish
             fi
       - run:
           name: Scan the image and publish to the Red Hat Catalog
@@ -76,7 +77,7 @@ jobs:
                     export EXTERNAL_HOST=${TREASURY_HOST}
                     export EXTERNAL_USER=${TREASURY_USER}
                     export EXTERNAL_PASS=${TREASURY_PASS}
-                    mage scanpublish
+                    mage scan
                     mage publishRedHat
                 fi
             else
