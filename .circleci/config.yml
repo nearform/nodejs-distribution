@@ -32,7 +32,7 @@ jobs:
                     exit 1
                 fi
             fi
-            cat $BASH_ENV
+            # cat $BASH_ENV
 
       - run:
           name: Install and configure treasury-cli
@@ -45,14 +45,39 @@ jobs:
           command: |
             mage showConfig
       - run:
+          name: Install Sources
+          command: |
+            mage installSources
+      - run:
           name: Build
-          command: mage build
+          command: |
+            mage build
+      - run:
+          name: Archive
+          command: |
+            if [ "$OS" == "rhel7" ]; then
+                mage archive
+            else
+                echo "OS is not [rhel7] not archiving"
+            fi
+      - run:
+          name: Upload
+          command: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                mage upload
+            else
+                echo "OS is not [rhel7] not uploading"
+            fi
       - run:
           name: Docker squash
-          command: mage squash
+          command: |
+            mage squash
       - run:
           name: Test
-          command: mage test
+          command: |
+            mage test
       - run:
           name: Scan the image and publish it to Docker Hub
           command: |
@@ -82,23 +107,5 @@ jobs:
                 fi
             else
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
-            fi
-      - run:
-          name: Archive
-          command: |
-            if [ "$OS" == "rhel7" ]; then
-                mage archive
-            else
-                echo "OS is not [rhel7] not archiving"
-            fi
-      - run:
-          name: Upload
-          command: |
-            if [ "$OS" == "rhel7" ]; then
-                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
-                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
-                mage upload
-            else
-                echo "OS is not [rhel7] not uploading"
             fi
 
