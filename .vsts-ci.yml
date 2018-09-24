@@ -3,8 +3,8 @@ resources:
   - container: nodejs_build_container
     image: nearform/docker_circleci:0.0.13
 
-#pool:
-#  vmImage: 'Ubuntu-16.04'
+pool:
+  vmImage: 'Ubuntu-16.04'
 
 container: nodejs_build_container
 
