@@ -6,8 +6,8 @@ steps:
   displayName: setup Golang
   inputs:
     version: '1.10'
-    goPath: $(GOPATH)
-    goBin: $(GOPATH)/bin
+  #  goPath: $(GOPATH)
+  #  goBin: $(GOPATH)/bin
   # install mage
 - script: |
             go get -u -d github.com/magefile/mage
