@@ -14,9 +14,11 @@ steps:
             cd $GOPATH/src/github.com/magefile/mage
             go run bootstrap.go
   displayName: setup mage make tool
-  # install other dependencies
+  # install and/or build other dependencies
 - script: |
-            apt-get install skopeo
+            apt install libgpgme-dev libassuan-dev btrfs-progs libdevmapper-dev libostree-dev
+            git clone https://github.com/containers/skopeo $GOPATH/src/github.com/containers/skopeo
+            cd $GOPATH/src/github.com/containers/skopeo && make binary-local
   displayName: install misc dependencies
   # configure
 - script: |
