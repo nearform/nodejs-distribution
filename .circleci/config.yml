@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Configure
           command: |
-            if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+            if [[ -z $OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
                 echo "export VERSION=10.0.0" >> $BASH_ENV
                 echo "export OS=centos7" >> $BASH_ENV
