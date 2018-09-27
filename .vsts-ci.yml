@@ -16,13 +16,9 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
-            sudo deb  http://deb.debian.org/debian stretch main contrib non-free
             sudo apt-get update -y
-            sudo apt-get install -y appstream/xenial-backports
+            sudo apt-get install -y appstream/xenial-backports skopeo
             sudo appstreamcli refresh --force
-            sudo apt-get install -y libgpgme-dev libassuan-dev btrfs-progs libdevmapper-dev libostree-dev
-            git clone https://github.com/containers/skopeo $GOPATH/src/github.com/containers/skopeo
-            cd $GOPATH/src/github.com/containers/skopeo && make binary-local
   displayName: install misc dependencies
   # configure
 - script: |
