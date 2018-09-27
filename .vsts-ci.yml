@@ -47,7 +47,7 @@ steps:
 
 - script: |
             ls -l /usr/share/go/bin/mage
-            export PATH=$PATH:$GOBIN
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             echo $PATH
             mage showConfig
   displayName: Info
