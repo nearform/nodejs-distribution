@@ -16,7 +16,7 @@ steps:
   displayName: setup mage make tool
   # install other dependencies
 - script: |
-            sudo dnf install skopeo
+            sudo yum install skopeo
   displayName: install misc dependencies
   # configure
 - script: |
