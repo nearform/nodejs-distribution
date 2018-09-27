@@ -14,6 +14,7 @@ steps:
             go get -u -d github.com/magefile/mage
             cd $GOPATH/src/github.com/magefile/mage
             go run bootstrap.go
+            echo "mage path " `which mage`
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
