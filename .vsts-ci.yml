@@ -16,7 +16,7 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
-            sudo rm /etc/apt/sources.list
+            sudo rm /etc/apt/sources.list.d/microsoft.list
             sudo apt-get install -y appstream/xenial-backports
             sudo appstreamcli refresh --force
             sudo apt-get install -y libgpgme-dev libassuan-dev btrfs-progs libdevmapper-dev libostree-dev
