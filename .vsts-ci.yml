@@ -48,6 +48,7 @@ steps:
 - script: |
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
             go get -v github.com/docker/docker/api/types
+            go get -v github.com/mholt/archiver
             mage showConfig
   displayName: Info
 - script: |
