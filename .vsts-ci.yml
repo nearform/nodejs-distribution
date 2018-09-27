@@ -43,24 +43,36 @@ steps:
                     exit 1
                 fi
             fi
-  displayName: configure
-
-- script: |
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
-            go get -v github.com/spf13/viper
+            go get github.com/spf13/viper
             mage showConfig
+  displayName: configure
+  env:
+    OS: $( OS )
+    VERSION: $( VERSION )
+    V8: $( V8 )
+    NPM: $( NPM )
+    TAG: $( TAG )
+
+#- script: |
+#            export PATH=$PATH:$GOBIN:/usr/share/go/bin
+#            go get github.com/docker/docker/api/types
+#            go get github.com/mholt/archiver
+#            go get github.com/spf13/viper
+#            mage showConfig
   displayName: Info
 - script: |
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage installSources
   displayName: Install Sources
 - script: |
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage build
   displayName: Build
 - script: |
             if [ "$OS" == "rhel7" ]; then
+                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage archive
             else
                 echo "OS is not [rhel7] not archiving"
@@ -70,21 +82,25 @@ steps:
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage upload
             else
                 echo "OS is not [rhel7] not uploading"
             fi
   displayName: Upload
 - script: |
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage squash
   displayName: Docker squash
 - script: |
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage test
   displayName: Test
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
+                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage publish
             fi
   displayName: Publish to Docker Hub
@@ -95,6 +111,7 @@ steps:
                     export RH_SECRET=$(getProjectSecret)
                     export RH_ENDPOINT="scan.connect.redhat.com"
                     export RH_PROJECT=$(getProjectId)
+                    export PATH=$PATH:$GOBIN:/usr/share/go/bin
                     mage publishRedHat
                 fi
             else
