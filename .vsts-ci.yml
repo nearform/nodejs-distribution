@@ -16,6 +16,7 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
+            sudo deb  http://deb.debian.org/debian stretch main contrib non-free
             sudo apt-get update -y
             sudo apt-get install -y appstream/xenial-backports
             sudo appstreamcli refresh --force
