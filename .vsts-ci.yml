@@ -4,11 +4,6 @@ resources:
     image: nearform/docker_circleci:0.0.13
 
 jobs:
-- job: Windows
-  pool: Hosted VS2017
-  steps:
-  - template: azure-pipelines/build.yml
-
 - job: Linux
   pool:
     vmImage: Ubuntu 16.04
