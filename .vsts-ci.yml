@@ -16,8 +16,10 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
+
+            sudo apt-add-repository ppa:projectatomic/ppa
             sudo apt-get update -y
-            sudo apt-get install -y appstream/xenial-backports skopeo
+            sudo apt-get install -y skopeo
   displayName: install misc dependencies
   # configure
 - script: |
