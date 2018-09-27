@@ -1,7 +1,7 @@
 queue: Hosted Linux Preview
 # setup build host
 steps:
-- checkout: none # skip checkout while debugging
+#- checkout: none # skip checkout while debugging
   # install Go
 - task: GoTool@0
   displayName: setup Golang
@@ -46,9 +46,7 @@ steps:
   displayName: configure
 
 - script: |
-            ls -l /usr/share/go/bin/mage
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
-            echo $PATH
             mage showConfig
   displayName: Info
 - script: |
