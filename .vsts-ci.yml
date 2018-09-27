@@ -17,8 +17,6 @@ steps:
   # install and/or build other dependencies
 - script: |
             sudo apt-get update -y
-#            sudo rm /etc/apt/sources.list.d/microsoft.list
-#            sudo rm /etc/apt/sources.list.d/msprod.list
             sudo apt-get install -y appstream/xenial-backports
             sudo appstreamcli refresh --force
             sudo apt-get install -y libgpgme-dev libassuan-dev btrfs-progs libdevmapper-dev libostree-dev
