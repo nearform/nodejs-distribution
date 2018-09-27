@@ -16,6 +16,8 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
+            apt install appstream/xenial-backports
+            appstreamcli refresh --force
             apt install libgpgme-dev libassuan-dev btrfs-progs libdevmapper-dev libostree-dev
             git clone https://github.com/containers/skopeo $GOPATH/src/github.com/containers/skopeo
             cd $GOPATH/src/github.com/containers/skopeo && make binary-local
