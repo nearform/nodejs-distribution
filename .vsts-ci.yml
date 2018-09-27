@@ -1,14 +1,92 @@
-resources:
-  containers:
-  - container: nodejs_build_container
-    image: nearform/docker_circleci:0.0.13
-
-pool:
-  vmImage: 'Ubuntu-16.04'
-
-container: nodejs_build_container
-
+queue: Hosted Linux Preview
+# setup build host
 steps:
-- script: printenv
-#- script: echo "hello world"
+  # install Go
+- task: GoTool@0
+  displayName: setup Golang
+  inputs:
+    version: '1.10'
+    goPath: $(GOPATH)
+    goBin: $(GOPATH)/bin
+  # install mage
+- script: |
+            go get -u -d github.com/magefile/mage
+            cd $GOPATH/src/github.com/magefile/mage
+            go run bootstrap.go
+  displayName: setup mage make tool
+  # configure
+- script: |
+            if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+                echo 'one or more variables are undefined, assuming build script debug mode'
+                echo "export VERSION=10.0.0" >> $BASH_ENV
+                echo "export OS=centos7" >> $BASH_ENV
+                echo "export V8=6.6.346.24" >> $BASH_ENV
+                echo "export NPM=5.6.0" >> $BASH_ENV
+                echo "export TAG=test-only" >> $BASH_ENV
+                echo "export PREBUILT=true" >> $BASH_ENV
+                export OS=centos7 && source contrib/etc/util.sh
+                echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
+            else
+                source contrib/etc/util.sh
+                if osSupported ${OS}; then
+                    echo ...
+                    echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
+                else
+                    echo "Unsupported os: $OS"
+                    exit 1
+                fi
+            fi
+  displayName: configure
+
+- script: |
+            mage showConfig
+  displayName: Info
+- script: |
+            mage installSources
+  displayName: Install Sources
+- script: |
+            mage build
+  displayName: Build
+- script: |
+            if [ "$OS" == "rhel7" ]; then
+                mage archive
+            else
+                echo "OS is not [rhel7] not archiving"
+            fi
+  displayName: Archive
+- script: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                mage upload
+            else
+                echo "OS is not [rhel7] not uploading"
+            fi
+  displayName: Upload
+- script: |
+            mage squash
+  displayName: Docker squash
+- script: |
+            mage test
+  displayName: Test
+- script: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "OS is [rhel7] not publishing to Docker Hub"
+            else
+                mage publish
+            fi
+  displayName: Publish to Docker Hub
+- script: |
+            if [ "$OS" == "rhel7" ]; then
+                source contrib/etc/util.sh
+                if ! isDebug && shouldPublish; then
+                    export RH_SECRET=$(getProjectSecret)
+                    export RH_ENDPOINT="scan.connect.redhat.com"
+                    export RH_PROJECT=$(getProjectId)
+                    mage publishRedHat
+                fi
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+  displayName: Publish to Red Hat
 
