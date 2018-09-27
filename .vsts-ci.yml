@@ -1,6 +1,7 @@
 queue: Hosted Linux Preview
 # setup build host
 steps:
+- checkout: none # skip checkout while debugging
   # install Go
 - task: GoTool@0
   displayName: setup Golang
@@ -16,14 +17,13 @@ steps:
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
-
             sudo apt-add-repository ppa:projectatomic/ppa
             sudo apt-get update -y
             sudo apt-get install -y skopeo
   displayName: install misc dependencies
   # configure
 - script: |
-            if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+            if [[ -z $OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
                 export VERSION=10.0.0
                 export OS=centos7
@@ -37,7 +37,7 @@ steps:
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     echo ...
-                    echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
+                    export FROM_DATA=\"$(getBaseImageForOs)\"
                 else
                     echo "Unsupported os: $OS"
                     exit 1
