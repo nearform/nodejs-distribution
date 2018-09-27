@@ -14,6 +14,10 @@ steps:
             cd $GOPATH/src/github.com/magefile/mage
             go run bootstrap.go
   displayName: setup mage make tool
+  # install other dependencies
+- script: |
+            sudo dnf install skopeo
+  displayName: install misc dependencies
   # configure
 - script: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
