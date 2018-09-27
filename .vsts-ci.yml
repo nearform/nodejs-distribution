@@ -53,6 +53,7 @@ steps:
             mage showConfig
   displayName: Info
 - script: |
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage installSources
   displayName: Install Sources
 - script: |
