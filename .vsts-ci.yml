@@ -7,8 +7,6 @@ steps:
   displayName: setup Golang
   inputs:
     version: '1.10'
-  #  goPath: $(GOPATH)
-  #  goBin: $(GOPATH)/bin
   # install mage
 - script: |
             go get -u -d github.com/magefile/mage
@@ -18,7 +16,7 @@ steps:
   # install and/or build other dependencies
 - script: |
             sudo apt-add-repository ppa:projectatomic/ppa
-            sudo apt-get -q update -y
+            sudo apt-get -qq update -y
             sudo apt-get -q install -y skopeo
   displayName: install misc dependencies
   # configure
@@ -79,6 +77,8 @@ steps:
                 echo "OS is not [rhel7] not archiving"
             fi
   displayName: Archive
+  env:
+    OS: $(OS)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
@@ -89,6 +89,10 @@ steps:
                 echo "OS is not [rhel7] not uploading"
             fi
   displayName: Upload
+  env:
+    OS: $(OS)
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
 - script: |
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage squash
@@ -105,6 +109,8 @@ steps:
                 mage publish
             fi
   displayName: Publish to Docker Hub
+  env:
+    OS: $(OS)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
@@ -119,3 +125,5 @@ steps:
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
             fi
   displayName: Publish to Red Hat
+  env:
+    OS: $(OS)
