@@ -14,19 +14,19 @@ jobs:
           command: |
             if [[ -z OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
                 echo 'one or more variables are undefined, assuming build script debug mode'
-                echo "export VERSION=10.0.0" >> $BASH_ENV
-                echo "export OS=centos7" >> $BASH_ENV
-                echo "export V8=6.6.346.24" >> $BASH_ENV
-                echo "export NPM=5.6.0" >> $BASH_ENV
-                echo "export TAG=test-only" >> $BASH_ENV
-                echo "export PREBUILT=true" >> $BASH_ENV
+                export VERSION=10.0.0
+                export OS=centos7
+                export V8=6.6.346.24
+                export NPM=5.6.0
+                export TAG=test-only
+                export PREBUILT=true
                 export OS=centos7 && source contrib/etc/util.sh
-                echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
+                export FROM_DATA=\"$(getBaseImageForOs)\"
             else
                 source contrib/etc/util.sh
                 if osSupported ${OS}; then
                     echo ...
-                    echo "export FROM_DATA=\"$(getBaseImageForOs)\"" >> $BASH_ENV
+                    export FROM_DATA=\"$(getBaseImageForOs)\"
                 else
                     echo "Unsupported os: $OS"
                     exit 1
