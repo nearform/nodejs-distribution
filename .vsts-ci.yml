@@ -14,7 +14,6 @@ steps:
             go get -u -d github.com/magefile/mage
             cd $GOPATH/src/github.com/magefile/mage
             go run bootstrap.go
-            ls -l /usr/share/go/bin/mage
   displayName: setup mage make tool
   # install and/or build other dependencies
 - script: |
@@ -47,6 +46,7 @@ steps:
   displayName: configure
 
 - script: |
+            ls -l /usr/share/go/bin/mage
             mage showConfig
   displayName: Info
 - script: |
