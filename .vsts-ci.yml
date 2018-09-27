@@ -61,7 +61,7 @@ steps:
 #            go get github.com/mholt/archiver
 #            go get github.com/spf13/viper
 #            mage showConfig
-  displayName: Info
+#  displayName: Info
 - script: |
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage installSources
