@@ -41,6 +41,8 @@ steps:
                     exit 1
                 fi
             fi
+            echo "##vso[task.setvariable variable=PREBUILT;isOutput=true]$PREBUILD"
+            echo "##vso[task.setvariable variable=FROM_DATA;isOutput=true]$FROM_DATA"
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
             go get github.com/spf13/viper
