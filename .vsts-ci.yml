@@ -73,13 +73,6 @@ steps:
     TAG: $(TAG)
     FROM_DATA: $(FROM_DATA)
     PREBUILT: $(PREBUILT)
-#- script: |
-#            export PATH=$PATH:$GOBIN:/usr/share/go/bin
-#            go get github.com/docker/docker/api/types
-#            go get github.com/mholt/archiver
-#            go get github.com/spf13/viper
-#            mage showConfig
-#  displayName: Info
 - script: |
             mage installSources
   displayName: Install Sources
