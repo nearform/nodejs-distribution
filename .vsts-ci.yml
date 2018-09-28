@@ -1,25 +1,3 @@
-queue: Hosted Linux Preview
-# setup build host
-steps:
-#- checkout: none # skip checkout while debugging
-  # install Go
-- task: GoTool@0
-  displayName: Setup Golang
-  inputs:
-    version: '1.10'
-  # install mage
-- script: |
-            go get -u -d github.com/magefile/mage
-            cd $GOPATH/src/github.com/magefile/mage
-            go run bootstrap.go
-  displayName: Setup mage make tool
-  # install and/or build other dependencies
-- script: |
-            sudo apt-add-repository ppa:projectatomic/ppa
-            sudo apt-get -qq update -y
-            sudo apt-get -q install -y skopeo
-            sudo apt autoremove
-  displayName: Install misc dependencies
 resources:
   containers:
   - container: circleci
