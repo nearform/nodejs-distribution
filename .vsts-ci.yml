@@ -4,7 +4,7 @@ steps:
 #- checkout: none # skip checkout while debugging
   # install Go
 - task: GoTool@0
-  displayName: setup Golang
+  displayName: Setup Golang
   inputs:
     version: '1.10'
   # install mage
@@ -12,13 +12,13 @@ steps:
             go get -u -d github.com/magefile/mage
             cd $GOPATH/src/github.com/magefile/mage
             go run bootstrap.go
-  displayName: setup mage make tool
+  displayName: Setup mage make tool
   # install and/or build other dependencies
 - script: |
             sudo apt-add-repository ppa:projectatomic/ppa
             sudo apt-get -qq update -y
             sudo apt-get -q install -y skopeo
-  displayName: install misc dependencies
+  displayName: Install misc dependencies
   # configure
 - script: |
             if [[ -z $OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
@@ -41,24 +41,18 @@ steps:
                     exit 1
                 fi
             fi
-            echo "##vso[task.setvariable variable=PREBUILT;isOutput=true]$PREBUILD"
-            echo "##vso[task.setvariable variable=FROM_DATA;isOutput=true]$FROM_DATA"
-            echo "##vso[task.setvariable variable=OS;isOutput=true]$OS"
-  displayName: configure
+            go get github.com/docker/docker/api/types
+            go get github.com/mholt/archiver
+            go get github.com/spf13/viper
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
+            mage showConfig
+  displayName: Configure
   env:
     OS: $(OS)
     VERSION: $(VERSION)
     V8: $(V8)
     NPM: $(NPM)
     TAG: $(TAG)
-  # info
-- script: |
-            go get github.com/docker/docker/api/types
-            go get github.com/mholt/archiver
-            go get github.com/spf13/viper
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
-            mage showConfig
-  displayName: configure
 
 #- script: |
 #            export PATH=$PATH:$GOBIN:/usr/share/go/bin
@@ -83,6 +77,8 @@ steps:
                 echo "OS is not [rhel7] not archiving"
             fi
   displayName: Archive
+  env:
+    OS: $(OS)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
@@ -94,6 +90,7 @@ steps:
             fi
   displayName: Upload
   env:
+    OS: $(OS)
     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
 - script: |
@@ -112,6 +109,8 @@ steps:
                 mage publish
             fi
   displayName: Publish to Docker Hub
+  env:
+    OS: $(OS)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
@@ -126,3 +125,5 @@ steps:
                 echo "OS is not [rhel7] not publishing to Red Hat Catalog"
             fi
   displayName: Publish to Red Hat
+  env:
+    OS: $(OS)
