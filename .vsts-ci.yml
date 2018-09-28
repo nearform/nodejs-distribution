@@ -43,6 +43,12 @@ steps:
                 fi
             fi
             echo "##vso[task.setvariable variable=FROM_DATA]$FROM_DATA"
+            echo "##vso[task.setvariable variable=PREBUILT]$PREBUILT"
+            echo "##vso[task.setvariable variable=OS]$OS"
+            echo "##vso[task.setvariable variable=VERSION]$VERSION"
+            echo "##vso[task.setvariable variable=NPM]$NPM"
+            echo "##vso[task.setvariable variable=TAG]$TAG"
+            echo "##vso[task.setvariable variable=V8]$V8"
   displayName: Configure
   env:
     OS: $(OS)
@@ -50,11 +56,13 @@ steps:
     V8: $(V8)
     NPM: $(NPM)
     TAG: $(TAG)
+# info
 - script: |
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
             go get github.com/spf13/viper
             export PATH=$PATH:$GOBIN:/usr/share/go/bin
+            echo "##vso[task.setvariable variable=PATH]$PATH"
             mage showConfig
   displayName: Info
   env:
@@ -64,6 +72,7 @@ steps:
     NPM: $(NPM)
     TAG: $(TAG)
     FROM_DATA: $(FROM_DATA)
+    PREBUILT: $(PREBUILT)
 #- script: |
 #            export PATH=$PATH:$GOBIN:/usr/share/go/bin
 #            go get github.com/docker/docker/api/types
@@ -72,16 +81,17 @@ steps:
 #            mage showConfig
 #  displayName: Info
 - script: |
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage installSources
   displayName: Install Sources
+  env:
+    PATH: $(PATH)
 - script: |
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage build
   displayName: Build
+  env:
+    PATH: $(PATH)
 - script: |
             if [ "$OS" == "rhel7" ]; then
-                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage archive
             else
                 echo "OS is not [rhel7] not archiving"
@@ -89,11 +99,11 @@ steps:
   displayName: Archive
   env:
     OS: $(OS)
+    PATH: $(PATH)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
                 echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
-                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage upload
             else
                 echo "OS is not [rhel7] not uploading"
@@ -103,23 +113,26 @@ steps:
     OS: $(OS)
     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+    PATH: $(PATH)
 - script: |
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage squash
   displayName: Docker squash
+  env:
+    PATH: $(PATH)
 - script: |
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
             mage test
   displayName: Test
+  env:
+    PATH: $(PATH)
 - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
             else
-                export PATH=$PATH:$GOBIN:/usr/share/go/bin
                 mage publish
             fi
   displayName: Publish to Docker Hub
   env:
+    PATH: $(PATH)
     OS: $(OS)
 - script: |
             if [ "$OS" == "rhel7" ]; then
@@ -128,7 +141,6 @@ steps:
                     export RH_SECRET=$(getProjectSecret)
                     export RH_ENDPOINT="scan.connect.redhat.com"
                     export RH_PROJECT=$(getProjectId)
-                    export PATH=$PATH:$GOBIN:/usr/share/go/bin
                     mage publishRedHat
                 fi
             else
@@ -137,3 +149,4 @@ steps:
   displayName: Publish to Red Hat
   env:
     OS: $(OS)
+    PATH: $(PATH)
