@@ -18,6 +18,7 @@ steps:
             sudo apt-add-repository ppa:projectatomic/ppa
             sudo apt-get -qq update -y
             sudo apt-get -q install -y skopeo
+            sudo apt autoremove
   displayName: Install misc dependencies
   # configure
 - script: |
@@ -41,11 +42,7 @@ steps:
                     exit 1
                 fi
             fi
-            go get github.com/docker/docker/api/types
-            go get github.com/mholt/archiver
-            go get github.com/spf13/viper
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
-            mage showConfig
+            echo "##vso[task.setvariable variable=FROM_DATA]$FROM_DATA"
   displayName: Configure
   env:
     OS: $(OS)
@@ -53,7 +50,20 @@ steps:
     V8: $(V8)
     NPM: $(NPM)
     TAG: $(TAG)
-
+- script: |
+            go get github.com/docker/docker/api/types
+            go get github.com/mholt/archiver
+            go get github.com/spf13/viper
+            export PATH=$PATH:$GOBIN:/usr/share/go/bin
+            mage showConfig
+  displayName: Info
+  env:
+    OS: $(OS)
+    VERSION: $(VERSION)
+    V8: $(V8)
+    NPM: $(NPM)
+    TAG: $(TAG)
+    FROM_DATA: $(FROM_DATA)
 #- script: |
 #            export PATH=$PATH:$GOBIN:/usr/share/go/bin
 #            go get github.com/docker/docker/api/types
