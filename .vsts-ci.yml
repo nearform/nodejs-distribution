@@ -50,9 +50,11 @@ jobs:
   - script: |
             sudo mkdir /usr/share/go
             sudo chown `whoami` /usr/share/go
+            go env GOPATH
             go get -u github.com/docker/docker/api/types
             go get -u github.com/mholt/archiver
             go get -u github.com/spf13/viper
+            go get -u github.com/magefile/mage/sh
             mage showConfig
     displayName: Info
     env:
