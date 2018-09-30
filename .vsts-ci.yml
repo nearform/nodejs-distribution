@@ -48,12 +48,11 @@ jobs:
       TAG: $(TAG)
   # info
   - script: |
-            go env GOPATH
+            sudo mkdir /usr/share/go
+            sudo chown `whoami` /usr/share/go
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
             go get github.com/spf13/viper
-            sudo mkdir /usr/share/go
-            sudo chown `whoami` /usr/share/go
             mage showConfig
     displayName: Info
     env:
