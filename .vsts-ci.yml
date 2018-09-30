@@ -1,7 +1,7 @@
 resources:
   containers:
   - container: circleci
-    image: shmukler/docker_vsts:0.0.8
+    image: shmukler/docker_vsts:0.0.9
 
 jobs:
 - job: Linux
@@ -50,9 +50,9 @@ jobs:
   - script: |
             sudo mkdir /usr/share/go
             sudo chown `whoami` /usr/share/go
-            go get github.com/docker/docker/api/types
-            go get github.com/mholt/archiver
-            go get github.com/spf13/viper
+            go -u get github.com/docker/docker/api/types
+            go -u get github.com/mholt/archiver
+            go -u get github.com/spf13/viper
             mage showConfig
     displayName: Info
     env:
