@@ -51,6 +51,7 @@ jobs:
             sudo mkdir /usr/share/go
             sudo chown `whoami` /usr/share/go
             sudo usermod -a -G root `whoami`
+            sudo chmod 777 /var/run/docker.sock
             go env GOPATH
             go get -u github.com/docker/docker/api/types
             go get -u github.com/mholt/archiver
