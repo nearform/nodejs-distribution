@@ -51,7 +51,7 @@ jobs:
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
             go get github.com/spf13/viper
-            mage showConfig
+            sudo mage showConfig
     displayName: Info
     env:
       OS: $(OS)
