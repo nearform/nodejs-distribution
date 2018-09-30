@@ -50,6 +50,7 @@ jobs:
   - script: |
             sudo mkdir /usr/share/go
             sudo chown `whoami` /usr/share/go
+            sudo usermod -a -G docker `whoami`
             go env GOPATH
             go get -u github.com/docker/docker/api/types
             go get -u github.com/mholt/archiver
