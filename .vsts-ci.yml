@@ -1,7 +1,7 @@
 resources:
   containers:
   - container: circleci
-    image: shmukler/docker_vsts:0.0.7
+    image: shmukler/docker_vsts:0.0.8
 
 jobs:
 - job: Linux
