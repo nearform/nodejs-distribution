@@ -1,7 +1,7 @@
 resources:
   containers:
   - container: circleci
-    image: nearform/docker_circleci:0.0.13
+    image: shmukler/docker_vsts:0.0.1
 
 jobs:
 - job: Linux
