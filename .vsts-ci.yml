@@ -1,7 +1,7 @@
 resources:
   containers:
   - container: circleci
-    image: shmukler/docker_vsts:0.0.3
+    image: shmukler/docker_vsts:0.0.4
 
 jobs:
 - job: Linux
@@ -48,10 +48,11 @@ jobs:
       TAG: $(TAG)
   # info
   - script: |
+            go env GOPATH
             go get github.com/docker/docker/api/types
             go get github.com/mholt/archiver
             go get github.com/spf13/viper
-            sudo mage showConfig
+            mage showConfig
     displayName: Info
     env:
       OS: $(OS)
