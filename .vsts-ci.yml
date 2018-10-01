@@ -97,9 +97,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
   - script: |
             mage squash
-            echo "working directory:" `pwd`
+            echo "squash working directory:" `pwd`
     displayName: Docker squash
   - script: |
+            echo "test working directory:" `pwd`
             mage test
     displayName: Test
   - script: |
