@@ -27,6 +27,8 @@ test_port=8080
 set -e
 
 image_exists() {
+  echo "image_exists() test_dir: ${test_dir}"
+  echo "image_exists() arg1: $1"
   docker inspect $1 &>/dev/null
 }
 
