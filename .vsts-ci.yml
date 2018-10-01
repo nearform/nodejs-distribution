@@ -98,9 +98,25 @@ jobs:
   - script: |
             mage squash
     displayName: Docker squash
+    env:
+      OS: $(OS)
+      VERSION: $(VERSION)
+      V8: $(V8)
+      NPM: $(NPM)
+      TAG: $(TAG)
+      FROM_DATA: $(FROM_DATA)
+      PREBUILT: $(PREBUILT)
   - script: |
             mage test
     displayName: Test
+    env:
+      OS: $(OS)
+      VERSION: $(VERSION)
+      V8: $(V8)
+      NPM: $(NPM)
+      TAG: $(TAG)
+      FROM_DATA: $(FROM_DATA)
+      PREBUILT: $(PREBUILT)
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
@@ -110,6 +126,12 @@ jobs:
     displayName: Publish to Docker Hub
     env:
       OS: $(OS)
+      VERSION: $(VERSION)
+      V8: $(V8)
+      NPM: $(NPM)
+      TAG: $(TAG)
+      FROM_DATA: $(FROM_DATA)
+      PREBUILT: $(PREBUILT)
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh
