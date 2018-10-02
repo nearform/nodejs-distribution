@@ -1,13 +1,13 @@
 resources:
   containers:
-  - container: circleci
+  - container: vstsbuild
     image: shmukler/docker_vsts:0.0.9
 
 jobs:
 - job: Linux
   pool:
     vmImage: Ubuntu 16.04
-  container: circleci
+  container: vstsbuild
 
   steps:
   # configure
@@ -97,10 +97,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
   - script: |
             mage squash
-            echo "squash working directory:" `pwd`
+            ls output
     displayName: Docker squash
   - script: |
-            echo "test working directory:" `pwd`
             mage test
     displayName: Test
   - script: |
