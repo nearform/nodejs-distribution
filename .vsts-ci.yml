@@ -97,9 +97,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
   - script: |
             mage squash
-    displayName: Docker squash
-  - script: |
-            docker load < output
             mage test
     displayName: Test
   - script: |
