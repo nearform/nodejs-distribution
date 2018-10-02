@@ -180,7 +180,7 @@ func Squash() {
 	tags := getTags()
 	fmt.Println(tags)
 	var envs = map[string]string{}
-	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker-squash", tags[0], "-f", fromImage(), "-t", tags[0], "--output-path", "output")
+	_, err := sh.Exec(envs, os.Stdout, os.Stdout, "docker-squash", tags[0], "-f", fromImage(), "-t", tags[0])
 	check(err)
 }
 
