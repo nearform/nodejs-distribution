@@ -1,13 +1,13 @@
 resources:
   containers:
-  - container: circleci
-    image: nearform/docker_circleci:0.0.13
+  - container: vstsbuild
+    image: shmukler/docker_vsts:0.0.9
 
 jobs:
 - job: Linux
   pool:
     vmImage: Ubuntu 16.04
-  container: circleci
+  container: vstsbuild
 
   steps:
   # configure
@@ -48,11 +48,15 @@ jobs:
       TAG: $(TAG)
   # info
   - script: |
-            go get github.com/docker/docker/api/types
-            go get github.com/mholt/archiver
-            go get github.com/spf13/viper
-            export PATH=$PATH:$GOBIN:/usr/share/go/bin
-            echo "##vso[task.setvariable variable=PATH]$PATH"
+            sudo mkdir /usr/share/go
+            sudo chown `whoami` /usr/share/go
+            sudo usermod -a -G root `whoami`
+            sudo chmod 777 /var/run/docker.sock
+            go env GOPATH
+            go get -u github.com/docker/docker/api/types
+            go get -u github.com/mholt/archiver
+            go get -u github.com/spf13/viper
+            go get -u github.com/magefile/mage/sh
             mage showConfig
     displayName: Info
     env:
@@ -66,13 +70,9 @@ jobs:
   - script: |
             mage installSources
     displayName: Install Sources
-    env:
-      PATH: $(PATH)
   - script: |
             mage build
     displayName: Build
-    env:
-      PATH: $(PATH)
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 mage archive
@@ -82,7 +82,6 @@ jobs:
     displayName: Archive
     env:
       OS: $(OS)
-      PATH: $(PATH)
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
@@ -96,17 +95,13 @@ jobs:
       OS: $(OS)
       AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-      PATH: $(PATH)
   - script: |
             mage squash
     displayName: Docker squash
-    env:
-      PATH: $(PATH)
   - script: |
+            docker load < output
             mage test
     displayName: Test
-    env:
-      PATH: $(PATH)
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
@@ -115,7 +110,6 @@ jobs:
             fi
     displayName: Publish to Docker Hub
     env:
-      PATH: $(PATH)
       OS: $(OS)
   - script: |
             if [ "$OS" == "rhel7" ]; then
@@ -132,4 +126,3 @@ jobs:
     displayName: Publish to Red Hat
     env:
       OS: $(OS)
-      PATH: $(PATH)
