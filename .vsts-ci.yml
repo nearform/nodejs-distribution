@@ -97,7 +97,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
   - script: |
             mage squash
-            ls -l output
+            echo "output dir " `ls -l output`
     displayName: Docker squash
   - script: |
             mage test
