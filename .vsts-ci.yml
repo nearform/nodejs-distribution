@@ -50,7 +50,7 @@ jobs:
   - script: |
             sudo mkdir /usr/share/go
             sudo chown `whoami` /usr/share/go
-            sudo usermod -a -G root `whoami`
+            sudo usermod -a -G docker `whoami`
             sudo chmod 777 /var/run/docker.sock
             go env GOPATH
             go get -u github.com/docker/docker/api/types
@@ -67,9 +67,11 @@ jobs:
       TAG: $(TAG)
       FROM_DATA: $(FROM_DATA)
       PREBUILT: $(PREBUILT)
+  # install sources
   - script: |
             mage installSources
     displayName: Install Sources
+  # build
   - script: |
             mage build
     displayName: Build
@@ -82,6 +84,7 @@ jobs:
     displayName: Archive
     env:
       OS: $(OS)
+  # archive RHEL7
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
@@ -95,12 +98,14 @@ jobs:
       OS: $(OS)
       AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
       AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  # upload RHEL7 archive to AWS S3
   - script: |
             mage squash
     displayName: Squash
   - script: |
             mage test
     displayName: Test
+  # publish image to Docker Hub
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 echo "OS is [rhel7] not publishing to Docker Hub"
@@ -110,6 +115,7 @@ jobs:
     displayName: Publish to Docker Hub
     env:
       OS: $(OS)
+  # publish to Red Hat catalog
   - script: |
             if [ "$OS" == "rhel7" ]; then
                 source contrib/etc/util.sh

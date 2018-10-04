@@ -11,8 +11,8 @@ RUN \
     URL="https://github.com/openshift/source-to-image/releases/download/$S2I_VERSION/source-to-image-$S2I_VERSION_COMPLETE-linux-amd64.tar.gz" && \
     wget "$URL" && \
     tar zxvf "source-to-image-$S2I_VERSION_COMPLETE-linux-amd64.tar.gz" && \
-    sudo mv ./s2i /usr/local/bin && \
-    sudo apt-get install -qqy \
+    mv ./s2i /usr/local/bin && \
+    apt-get install -qqy \
         python-dev \
         python-setuptools \
         build-essential \
@@ -25,8 +25,8 @@ RUN \
         libglib2.0-dev \
         libostree-dev && \
     curl -fsSL https://get.docker.com -o get-docker.sh && \
-    sudo sh get-docker.sh && \
-    sudo rm -rf /var/lib/apt/lists/* && \
+    sh get-docker.sh && \
+    rm -rf /var/lib/apt/lists/* && \
     go env GOPATH && \
     go get -u github.com/magefile/mage && \
     go get -u github.com/magefile/mage/sh && \
@@ -37,13 +37,13 @@ RUN \
     go get -u github.com/spf13/viper && \
     go get -u github.com/docker/docker/client && \
     go get -u github.com/mholt/archiver && \
-    sudo easy_install pip && \
-    sudo pip install https://github.com/goldmann/docker-squash/archive/master.zip && \
-    sudo pip install python-dateutil && \
-    sudo pip install --no-deps s3cmd && \
+    easy_install pip && \
+    pip install https://github.com/goldmann/docker-squash/archive/master.zip && \
+    pip install python-dateutil && \
+    pip install --no-deps s3cmd && \
     curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" && \
     unzip awscli-bundle.zip && \
-    sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
+    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     git clone https://github.com/projectatomic/skopeo $GOPATH/src/github.com/projectatomic/skopeo && \
     cd $GOPATH/src/github.com/projectatomic/skopeo && GO111MODULE=on make binary-local && \
-sudo mv skopeo /usr/bin/
+mv skopeo /usr/bin/
