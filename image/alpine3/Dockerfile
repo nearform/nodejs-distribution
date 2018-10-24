@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.8
 # This image provides a Node.JS environment you can use to run your Node.JS applications.
 
 ## START s2i specific stuff
