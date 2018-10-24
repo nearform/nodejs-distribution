@@ -27,6 +27,13 @@
           "project_id": "ospid-e5391db4-ff36-4348-9731-ce887a2043a2",
           "repository_name": "rhel7-s2i-nodejs10",
           "secret_env_name": "NODEJS_10_SECRET"
+        },{
+          "name": "Node.js 11.x Distribution",
+          "id": "",
+          "version": "11",
+          "project_id": "ospid-9283e0dd-7cac-4391-9000-ed03a1ec7326",
+          "repository_name": "rhel7-s2i-nodejs11",
+          "secret_env_name": "NODEJS_11_SECRET"
         }
       ]
     }
