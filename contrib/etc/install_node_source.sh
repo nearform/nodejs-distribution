@@ -45,4 +45,4 @@ chmod -R 777 /opt/app-root/src/.config
 find /usr/local/lib/node_modules/npm -name test -o -name .bin -type d | xargs rm -rf
 
 # Clean up the stuff we downloaded
-rm -rf /tmp/node-v${NODE_VERSION} ~/.npm ~/.node-gyp ~/.gnupg /usr/share/man /tmp/* /usr/local/lib/node_modules/npm/man /usr/local/lib/node_modules/npm/doc /usr/local/lib/node_modules/npm/html
+rm -rf /src/node-v${NODE_VERSION} ~/.npm ~/.node-gyp ~/.gnupg /usr/share/man /tmp/* /usr/local/lib/node_modules/npm/man /usr/local/lib/node_modules/npm/doc /usr/local/lib/node_modules/npm/html
