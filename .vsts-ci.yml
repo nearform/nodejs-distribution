@@ -1,0 +1,136 @@
+resources:
+  containers:
+  - container: vstsbuild
+    image: shmukler/docker_vsts:0.0.10
+
+jobs:
+- job: Linux
+  pool:
+    vmImage: Ubuntu 16.04
+  container: vstsbuild
+
+  steps:
+  # configure
+  - script: |
+            if [[ -z $OS || -z $VERSION || -z $V8 || -z $NPM || -z $TAG ]]; then
+                echo 'one or more variables are undefined, assuming build script debug mode'
+                export VERSION=10.0.0
+                export OS=centos7
+                export V8=6.6.346.24
+                export NPM=5.6.0
+                export TAG=test-only
+                export PREBUILT=true
+                export OS=centos7 && source contrib/etc/util.sh
+                export FROM_DATA=\"$(getBaseImageForOs)\"
+            else
+                source contrib/etc/util.sh
+                if osSupported ${OS}; then
+                    echo ...
+                    export FROM_DATA=\"$(getBaseImageForOs)\"
+                else
+                    echo "Unsupported os: $OS"
+                    exit 1
+                fi
+            fi
+            echo "##vso[task.setvariable variable=FROM_DATA]$FROM_DATA"
+            echo "##vso[task.setvariable variable=PREBUILT]$PREBUILT"
+            echo "##vso[task.setvariable variable=OS]$OS"
+            echo "##vso[task.setvariable variable=VERSION]$VERSION"
+            echo "##vso[task.setvariable variable=NPM]$NPM"
+            echo "##vso[task.setvariable variable=TAG]$TAG"
+            echo "##vso[task.setvariable variable=V8]$V8"
+    displayName: Configure
+    env:
+      OS: $(OS)
+      VERSION: $(VERSION)
+      V8: $(V8)
+      NPM: $(NPM)
+      TAG: $(TAG)
+  # info
+  - script: |
+            sudo mkdir /usr/share/go
+            sudo chown `whoami` /usr/share/go
+            sudo usermod -a -G docker `whoami`
+            sudo chmod 777 /var/run/docker.sock
+            go env GOPATH
+            go get -u github.com/docker/docker/api/types
+            go get -u github.com/mholt/archiver
+            go get -u github.com/spf13/viper
+            go get -u github.com/magefile/mage/sh
+            mage showConfig
+    displayName: Info
+    env:
+      OS: $(OS)
+      VERSION: $(VERSION)
+      V8: $(V8)
+      NPM: $(NPM)
+      TAG: $(TAG)
+      FROM_DATA: $(FROM_DATA)
+      PREBUILT: $(PREBUILT)
+  # install sources
+  - script: |
+            mage installSources
+    displayName: Install Sources
+  # build
+  - script: |
+            mage build
+    displayName: Build
+  - script: |
+            if [ "$OS" == "rhel7" ]; then
+                mage archive
+            else
+                echo "OS is not [rhel7] not archiving"
+            fi
+    displayName: Archive
+    env:
+      OS: $(OS)
+  # archive RHEL7
+  - script: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "access_key = $AWS_ACCESS_KEY_ID" >> ~/.s3cfg
+                echo "secret_key = $AWS_SECRET_ACCESS_KEY" >> ~/.s3cfg
+                mage upload
+            else
+                echo "OS is not [rhel7] not uploading"
+            fi
+    displayName: Upload
+    env:
+      OS: $(OS)
+      AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+      AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  # upload RHEL7 archive to AWS S3
+  - script: |
+            mage squash
+    displayName: Squash
+  - script: |
+            mage test
+    displayName: Test
+  # publish image to Docker Hub
+  - script: |
+            if [ "$OS" == "rhel7" ]; then
+                echo "OS is [rhel7] not publishing to Docker Hub"
+            else
+                echo "DOCKER_USER:" $DOCKER_USER
+                mage publish
+            fi
+    displayName: Publish to Docker Hub
+    env:
+      OS: $(OS)
+      DOCKER_USER: $(DOCKER_USER)
+      DOCKER_PASS: $(DOCKER_PASS)
+  # publish to Red Hat catalog
+  - script: |
+            if [ "$OS" == "rhel7" ]; then
+                source contrib/etc/util.sh
+                if ! isDebug && shouldPublish; then
+                    export RH_SECRET=$(getProjectSecret)
+                    export RH_ENDPOINT="scan.connect.redhat.com"
+                    export RH_PROJECT=$(getProjectId)
+                    mage publishRedHat
+                fi
+            else
+                echo "OS is not [rhel7] not publishing to Red Hat Catalog"
+            fi
+    displayName: Publish to Red Hat
+    env:
+      OS: $(OS)
