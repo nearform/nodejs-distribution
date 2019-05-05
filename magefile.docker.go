@@ -14,6 +14,7 @@ import (
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
 	"github.com/mholt/archiver"
+    "github.com/magefile/mage/sh"
 )
 
 const defaultDockerAPIVersion = "v1.37"
@@ -108,6 +109,19 @@ func Publish() error {
 
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	return jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFd, isTerm, nil)
+}
+
+// Scan the container image for vulnerabilities using treasury-cli
+func Scan() {
+    fmt.Println("Scanning the image...")
+    tags := getTags()
+    chdirErr := os.Chdir("/opt/treasury-cli")
+    if chdirErr != nil {
+        panic(chdirErr)
+    }
+    var envs = map[string]string{}
+    _, err := sh.Exec(envs, os.Stdout, os.Stdout, "./treasury-cli", string(tags[0]))
+    check(err)
 }
 
 // publish to Red Hat Catalog
